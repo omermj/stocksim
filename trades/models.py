@@ -1,6 +1,7 @@
 from db import db
 from alpaca.data.historical.stock import StockHistoricalDataClient
 from alpaca.data.requests import StockSnapshotRequest
+from datetime import datetime
 
 # TODO: MOVE API KEYS TO A SEPARATE FILE
 API_KEY = "PK0GRC1UBR3JTTNCPQA6"
@@ -18,6 +19,8 @@ class Trade(db.Model):
     qty = db.Column(db.Integer, nullable=False)
     entry_price = db.Column(db.Float, nullable=False)
     exit_price = db.Column(db.Float)
+    entry_date = db.Column(db.DateTime, default=datetime.utcnow)
+    exit_date = db.Column(db.DateTime)
     status = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey(
         "users.id", ondelete="CASCADE"))
@@ -74,6 +77,7 @@ class Trade(db.Model):
 
         # Change status to closed
         self.exit_price = exit_price
+        self.exit_date = datetime.utcnow
         self.status = "closed"
 
         try:

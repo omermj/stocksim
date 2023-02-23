@@ -1,4 +1,4 @@
-from flask import Flask, redirect
+from flask import Flask, redirect, render_template, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from config import Config
 from db import db, connect_db
@@ -9,8 +9,7 @@ from stocks.models import Stock, Watchlist_Stock
 from users.routes import users
 from trades.routes import trades
 from watchlists.routes import watchlists
-
-
+from auth.routes import auth, CURR_USER_KEY
 
 
 # Create Flask App
@@ -24,15 +23,39 @@ db.create_all()
 # Enable DTE
 debug = DebugToolbarExtension(app)
 
+
 # Blueprints
 app.register_blueprint(users, url_prefix="/users")
 app.register_blueprint(trades, url_prefix="/trades")
 app.register_blueprint(watchlists, url_prefix="/watchlists")
+app.register_blueprint(auth, url_prefix="/auth")
+
+
+# Run before each request
+@app.before_request
+def add_user_to_g():
+    """If logged in, add user to Flask global (g)"""
+
+    if CURR_USER_KEY in session:
+        g.user = User.query.get(session[CURR_USER_KEY])
+    else:
+        g.user = None
 
 
 # Root view
 @app.route("/")
-def root():
+def show_homepage():
     """Homepage: redirect to /playlists."""
 
-    return "connected"
+    return render_template("homepage.html")
+
+
+@app.after_request
+def add_header(req):
+    """Add non-caching headers on every request."""
+
+    req.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    req.headers["Pragma"] = "no-cache"
+    req.headers["Expires"] = "0"
+    req.headers['Cache-Control'] = 'public, max-age=0'
+    return req

@@ -131,3 +131,6 @@ class User(db.Model):
             return False
         else:
             return self.account_balance
+
+    # @classmethod
+    # def check_user_login_status()

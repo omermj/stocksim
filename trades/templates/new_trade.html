@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}
+  New Trade
+{% endblock title %}
+
+{% block content %}
+  <div class="container">
+    <h3>Enter New Trade</h3>
+    <form id="new-trade-form">
+      {{ form.hidden_tag() }}
+      <div class="form-group">
+        {{ form.symbol.label }}
+        {{ form.symbol(class_="form-control") }}
+      </div>
+      <div class="form-group">
+        <div>{{ form.type.label }}</div>
+        <div class="form-check form-check-inline">
+          {% for subfield in form.type %}
+            {{ subfield(class_="form-check-label mr-2") }}
+            {{ subfield.label(class_="form-check-input mt-2") }}
+          {% endfor %}
+        </div>
+      </div>
+      <div class="form-group">
+        {{ form.qty.label }}
+        {{ form.qty(class_="form-control") }}
+      </div>
+      <button type="reset"
+              class="btn btn-secondary mr-2">Reset</button>
+      <button type="submit"
+              class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+  <div id="enter-trade-output"
+       class="container mt-5 d-none">
+    <p id="trade-response"
+       class="font-weight-bold"></p>
+    <p>
+      To return to portfolio summary, <a href="/users/{{ g.user.id }}">click here</a>
+    </p>
+  </div>
+{% endblock content %}

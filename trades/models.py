@@ -46,17 +46,16 @@ class Trade(db.Model):
             raise ValueError(
                 "trade_type must be a string and can only be 'buy' or 'sell'.")
 
-        # Get entry price from Alpaca API
-        entry_price = cls.get_latest_quote(symbol)
-
-        # TODO: Move exception handling to get_latest_quote function
-        if not entry_price:
-            raise RuntimeError("Cannot retrieve latest stock price.")
-
-        trade = Trade(symbol=symbol, trade_type=trade_type, qty=qty,
-                      entry_price=entry_price, status="open", user_id=user_id)
-
         try:
+            # Get entry price from Alpaca API
+            entry_price = cls.get_latest_quote(symbol)
+
+            # TODO: Move exception handling to get_latest_quote function
+            if not entry_price:
+                return False
+
+            trade = Trade(symbol=symbol, trade_type=trade_type, qty=qty,
+                          entry_price=entry_price, status="open", user_id=user_id)
             db.session.add(trade)
             db.session.commit()
         except:

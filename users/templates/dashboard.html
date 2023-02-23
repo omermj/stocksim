@@ -7,7 +7,7 @@
 {% block content %}
   <div class="container-fluid mt-3">
     <h1>User Dashboard</h1>
-    <div>
+    <div id="portfolio">
       <h3>Portfolio</h3>
       <!-- Open Positions -->
       <table class="table">
@@ -45,6 +45,68 @@
                 <td class="text-center">{{ trade.get_pnl() }}</td>
                 <td class="text-center">
                   <button class="btn btn-danger btn-sm">Close</button>
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div id="closed-positions">
+      <h3>Closed Positions</h3>
+      <!-- Closed Positions -->
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Timestamp</th>
+            <th scope="col"
+                class="text-center">Symbol</th>
+            <th scope="col"
+                class="text-center">Type</th>
+            <th scope="col"
+                class="text-center">Quantity</th>
+            <th scope="col"
+                class="text-center">
+              Entry Price
+            </th>
+            <th scope="col"
+                class="text-center">
+              Exit Price
+            </th>
+            <th scope="col"
+                class="text-center">
+              Realized P/L
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for trade in trades %}
+            {% if trade.status=="closed" %}
+              <tr>
+                <td>
+                  {{ trade.id }}
+                </td>
+                <td>
+                  {{ trade.get_date("entry") }}
+                </td>
+                <td class="text-center">
+                  {{ trade.symbol.upper() }}
+                </td>
+                <td class="text-center">
+                  {{ trade.trade_type }}
+                </td>
+                <td class="text-center">
+                  {{ trade.qty }}
+                </td>
+                <td class="text-center">
+                  {{ trade.entry_price }}
+                </td>
+                <td class="text-center">
+                  {{ trade.latest_price }}
+                </td>
+                <td class="text-center">
+                  {{ trade.get_pnl() }}
                 </td>
               </tr>
             {% endif %}

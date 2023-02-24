@@ -74,7 +74,7 @@ class Trade(db.Model):
         if not latest_price:
             raise RuntimeError("Cannot retrieve latest stock price.")
 
-        # Change status to closed
+        # Change status to closed, update latest price and update exit date
         self.latest_price = latest_price
         self.exit_date = datetime.utcnow()
         self.status = "closed"

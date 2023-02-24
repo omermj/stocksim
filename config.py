@@ -3,6 +3,6 @@ class Config(object):
     
     SQLALCHEMY_DATABASE_URI = 'postgresql:///stocksim_db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ECHO = True
+    SQLALCHEMY_ECHO = False
     SECRET_KEY = "abcdefghijk"
     DEBUG_TB_INTERCEPT_REDIRECTS = False

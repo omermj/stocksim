@@ -7,10 +7,14 @@
 {% block content %}
   <div class="container-fluid mt-3">
     <h1>User Dashboard</h1>
+    <div id="account-balance-container">
+      <h3 id="account-balance">Account Balance: {{ "${:,.2f}".format(user.account_balance) }}</h3>
+    </div>
     <div id="portfolio">
       <h3>Portfolio</h3>
       <!-- Open Positions -->
-      <table class="table">
+      <table class="table"
+             id="portfolio-table">
         <thead>
           <tr>
             <th scope="col">ID</th>
@@ -44,7 +48,8 @@
                 <td class="text-center">{{ trade.latest_price }}</td>
                 <td class="text-center">{{ trade.get_pnl() }}</td>
                 <td class="text-center">
-                  <button class="btn btn-danger btn-sm">Close</button>
+                  <button id="trade-exit-btn" class="btn btn-danger btn-sm" data-trade-id={{ trade.id }}>Close
+                  </button>
                 </td>
               </tr>
             {% endif %}
@@ -55,7 +60,8 @@
     <div id="closed-positions">
       <h3>Closed Positions</h3>
       <!-- Closed Positions -->
-      <table class="table">
+      <table class="table"
+             id="closed-trades-table">
         <thead>
           <tr>
             <th scope="col">ID</th>
@@ -80,7 +86,7 @@
             </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="tbody-closed-trades">
           {% for trade in trades %}
             {% if trade.status=="closed" %}
               <tr>

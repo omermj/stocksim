@@ -1,0 +1,23 @@
+{% from "macros/fields.html" import render_profile_field %}
+{% extends "base.html" %}
+
+{% block title %}
+  Update Profile
+{% endblock title %}
+
+{% block content %}
+  <div class="container col-3 mt-5">
+    <form method="POST"
+          action="/users/{{ g.user.id }}/profile">
+      {{ form.hidden_tag() }}
+      {{ render_profile_field(form.username, true) }}
+      {{ render_profile_field(form.first_name) }}
+      {{ render_profile_field(form.last_name) }}
+      {{ render_profile_field(form.email) }}
+      <div class="form-group text-center">
+        <button type="submit"
+                class="btn btn-primary btn-lg mt-3">Update</button>
+      </div>
+    </form>
+  </div>
+{% endblock content %}

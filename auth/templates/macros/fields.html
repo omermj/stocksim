@@ -1,7 +1,7 @@
 {% macro render_profile_field(field, readonly = false) %}
-  {% for err in field.errors %}<span class="text-danger">{{ err }}</span>{% endfor %}
   <div class="form-group">
     {{ field.label }}
     {{ field(class_="form-control", readonly=readonly) }}
+    {% for err in field.errors %}<span class="text-danger small">{{ err }}</span>{% endfor %}
   </div>
 {% endmacro %}

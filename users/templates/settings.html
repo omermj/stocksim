@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Account Settings
+{% endblock title %}
+
+{% block content %}
+  <div class="container col-3 mt-5">
+    <h4 class="h4 mb-3">Account Balance: {{ "${:,.2f}".format(user.account_balance) }}</h4>
+    <form method="POST"
+          action="/users/{{ g.user.id }}/settings">
+      {{ form.hidden_tag() }}
+      
+      <div class="form-check form-check-inline mb-3">
+        {% for subfield in form.type %}
+          {{ subfield(class_="form-check-label mr-2") }}
+          {{ subfield.label(class_="form-check-input mt-2") }}
+        {% endfor %}
+      </div>
+      <div class="form-group">
+        {{ form.amount.label }}
+        {{ form.amount(class_="form-control") }}
+        {% for err in form.amount.errors %}<span class="text-danger small">{{ err }}</span>{% endfor %}
+      </div>
+      <div class="form-group text-center">
+        <button type="submit"
+                class="btn btn-primary btn-lg mt-3">Update</button>
+      </div>
+    </form>
+  </div>
+{% endblock content %}

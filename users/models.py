@@ -64,10 +64,14 @@ class User(db.Model):
 
         return False
 
-    def change_password(self, new_password):
+    def change_password(self, username, current_password, new_password):
         """Change user password
 
         Returns True if successful, else returns False"""
+        
+        # Authenticate user
+        if User.authenticate(username=username, password=current_password) == False:
+            return False
 
         hashed_pwd = bcrypt.generate_password_hash(
             new_password).decode("UTF-8")

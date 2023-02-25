@@ -9,6 +9,11 @@ $("#new-trade-form").on("submit", handleNewTradeSubmission);
 async function handleNewTradeSubmission(e) {
   e.preventDefault();
 
+  // Hide all previous errors
+  $("#symbol-error").addClass("d-none");
+  $("#qty-error").addClass("d-none");
+  $("#enter-trade-output").addClass("d-none");
+
   // Make POST request to enter new trade
   const response = await axios.post("/trades/", {
     symbol: $("#symbol").val(),
@@ -16,11 +21,29 @@ async function handleNewTradeSubmission(e) {
     qty: parseInt($("#qty").val()),
   });
 
-  // If trade is entered successfully
-  if (response.data.result !== "unsuccessful") {
+  // If there is an error from server, show it on page:
+  if ("error" in response.data) {
+    if (response.data.error.type === "symbol") {
+      $("#symbol-error").text(response.data.error.message);
+      $("#symbol-error").removeClass("d-none");
+    }
+    if (response.data.error.type === "qty") {
+      $("#qty-error").text(response.data.error.message);
+      $("#qty-error").removeClass("d-none");
+    }
+    if (response.data.error.type === "others") {
+      $("#trade-response").text(response.data.error);
+      $("#trade-response").addClass("text-danger");
+      $("#enter-trade-output").removeClass("d-none");
+    }
+  }
+
+  // Else, show the trade entry results
+  else {
+    console.log(response.data);
     const trade = response.data;
     $("#trade-response").text(
-      `The trade is successfully placed. Bought ${trade.qty} shares of 
+      `The trade is successfully placed. Bought ${trade.qty} shares of
       ${trade.symbol} at $${trade.entry_price} (Ticket# ${trade.trade_id})`
     );
     $("#trade-response").addClass("text-success");
@@ -28,14 +51,6 @@ async function handleNewTradeSubmission(e) {
 
     // reset form
     $("#new-trade-form").trigger("reset");
-  }
-  // In case of an error
-  else {
-    $("#trade-response").text(
-      "An error occured while entering the trade. Please try again later."
-    );
-    $("#trade-response").addClass("text-danger");
-    $("#enter-trade-output").removeClass("d-none");
   }
 }
 
@@ -59,7 +74,9 @@ async function handleTradeExit(e) {
     $(this).parents("tr").remove();
     console.log(response.data);
     addClosedTrade(response.data);
-    $("#account-balance").html(`Account Balance: $${response.data["account_balance"].toLocaleString()}`)
+    $("#account-balance").html(
+      `Account Balance: $${response.data["account_balance"].toLocaleString()}`
+    );
   }
 }
 
@@ -69,7 +86,9 @@ function addClosedTrade(trade) {
                   ${trade.trade_id}
                 </td>
                 <td>
-                  ${moment(trade.exit_date).utc().format("YYYY/MM/DD - hh:mm A")}
+                  ${moment(trade.exit_date)
+                    .utc()
+                    .format("YYYY/MM/DD - hh:mm A")}
                 </td>
                 <td class="text-center">
                   ${trade.symbol}

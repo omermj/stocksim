@@ -1,7 +1,9 @@
 from db import db
 from alpaca.data.historical.stock import StockHistoricalDataClient
 from alpaca.data.requests import StockSnapshotRequest
+from alpaca.common import exceptions
 from datetime import datetime
+from users.models import User
 
 # TODO: MOVE API KEYS TO A SEPARATE FILE
 API_KEY = "PK0GRC1UBR3JTTNCPQA6"
@@ -33,33 +35,49 @@ class Trade(db.Model):
     def enter_trade(cls, symbol, trade_type, qty, user_id):
         """Enter new trade
 
-        Return new trade if successful, else return False"""
+        Return new trade if successful, else return error message as
+        {"error" : "message" }"""
 
         # Validate quantity
-        if not type(qty) is int or qty < 1:
-            raise ValueError(
-                "qty can only be an integer and must be greater than 0.")
+        if not type(qty) is int or qty < 1 or qty > 1000000000:
+            return ({"error": {
+                "type": "qty",
+                "message": "Quantity can only be a number and must be greater than 0 and below 1,000,000,000."
+            }})
 
         # Validate trade type
-        if not type(trade_type) is str or \
+        if type(trade_type) is not str or \
                 (trade_type.lower() != "buy" and trade_type.lower() != "sell"):
-            raise ValueError(
-                "trade_type must be a string and can only be 'buy' or 'sell'.")
+            return ({"error": {
+                "type": "others",
+                "message": "Trade type must be a string and can only be 'buy' or 'sell'."
+            }})
+
+        # Get entry price from Alpaca API
+        entry_price = cls.get_latest_quote(symbol)
+
+        # If there is an error in retrieving price, return error message
+        if not isinstance(entry_price, float):
+            return entry_price
+
+        # Check if margin is available
+        user = User.query.get(user_id)
+        if (entry_price * qty) > user.get_margin_available():
+            return ({"error": {
+                "type": "others",
+                "message": "Sufficient margin is not available. Please deposit more funds."
+            }})
 
         try:
-            # Get entry price from Alpaca API
-            entry_price = cls.get_latest_quote(symbol)
-
-            # TODO: Move exception handling to get_latest_quote function
-            if not entry_price:
-                return False
-
             trade = Trade(symbol=symbol, trade_type=trade_type, qty=qty,
                           entry_price=entry_price, status="open", user_id=user_id)
             db.session.add(trade)
             db.session.commit()
         except:
-            return False
+            return ({"error": {
+                "type": "others",
+                "message": "An error has occured while processing your request. Please try again later."
+            }})
         else:
             return trade
 
@@ -104,10 +122,24 @@ class Trade(db.Model):
         # Get the response
         try:
             response = client.get_stock_snapshot(request)
-        except:
-            return False
+        except exceptions.APIError as e:
+            return ({"error": {
+                    "type": "symbol",
+                    "message": "The symbol is not valid."
+                    }})
+        except Exception as e:
+            return ({"error": {
+                    "type": "others",
+                    "message": "An unknown error has occured. Please try again."
+                    }})
         else:
-            return round(response[symbol].latest_trade.price, 2)
+            if response != None:
+                return round(response[symbol].latest_trade.price, 2)
+            else:
+                return ({"error": {
+                    "type": "symbol",
+                    "message": "The symbol is not valid."
+                }})
 
     @classmethod
     def get_latest_quotes(cls, symbols):
@@ -203,3 +235,8 @@ class Trade(db.Model):
             return False
         else:
             return True
+
+    def get_trade_margin(self):
+        """Returns margin used by trade"""
+
+        return self.entry_price * self.qty * self.user.margin_requirement

@@ -44,7 +44,8 @@ def enter_new_trade():
     response = Trade.enter_trade(symbol=symbol, trade_type=type,
                                  qty=qty, user_id=user_id)
 
-    if response != False:
+    # If reponse is not an instance of Trade (error in entering trade)
+    if isinstance(response, Trade):
         return jsonify({"result": "successful",
                         "trade_id": response.id,
                         "symbol": response.symbol,
@@ -52,9 +53,8 @@ def enter_new_trade():
                         "qty": response.qty,
                         "entry_price": response.entry_price
                         })
-
     else:
-        return jsonify({"result": "unsuccessful"})
+        return jsonify(response)
 
 
 @trades.route("/<int:trade_id>", methods=["PUT"])

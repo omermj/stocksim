@@ -1,18 +1,59 @@
 {% extends "base.html" %}
 
 {% block title %}
-  User Dashboard
+  Dashboard
 {% endblock title %}
 
 {% block content %}
-  <div class="container-fluid mt-3">
-    <h1>User Dashboard</h1>
-    <div id="account-balance-container">
-      <h3 id="account-balance">Account Balance: {{ "${:,.2f}".format(user.account_balance) }}</h3>
+  <div class="container-fluid mt-4">
+    <div class="card-deck mb-3 justify-content-center"
+         id="account-balance-container">
+      <!--Cards-->
+      <div class="card border-light mb-3"
+           style="max-width: 18rem">
+        <div class="card-header text-center text-light font-weight-bold bg-primary">ACCOUNT BALANCE</div>
+        <div class="card-body">
+          <h3 class="card-title text-center">{{ "${:,.2f}".format(user.account_balance) }}</h3>
+          <p class="card-text text-center text-success">+5.00%</p>
+        </div>
+      </div>
+      <div class="card border-light mb-3"
+           style="max-width: 18rem">
+        <div class="card-header text-center text-light font-weight-bold bg-primary">EQUITY</div>
+        <div class="card-body">
+          <h3 class="card-title text-center">{{ "${:,.2f}".format(user.get_equity()) }}</h3>
+          <p class="card-text text-center text-success">+3.67%</p>
+        </div>
+      </div>
+      <div class="card border-light mb-3"
+           style="max-width: 18rem">
+        <div class="card-header text-center text-light font-weight-bold bg-primary">BUYING POWER</div>
+        <div class="card-body">
+          <h3 class="card-title text-center">{{ "${:,.2f}".format(user.get_margin_available()) }}</h3>
+          <p class="card-text text-center text-success">+3.67%</p>
+        </div>
+      </div>
+      <div class="card border-light mb-3"
+           style="max-width: 18rem">
+        <div class="card-header text-center text-light font-weight-bold bg-primary">REALIZED GAIN/LOSS</div>
+        <div class="card-body">
+          <h3 class="card-title text-center">$76.04</h3>
+          <p class="card-text text-center text-success">+3.67%</p>
+        </div>
+      </div>
+      <div class="card border-light mb-3"
+           style="max-width: 18rem">
+        <div class="card-header text-center text-light font-weight-bold bg-primary">UNREALIZED GAIN/LOSS</div>
+        <div class="card-body">
+          <h3 class="card-title text-center">$52.04</h3>
+          <p class="card-text text-center text-success">+1.67%</p>
+        </div>
+      </div>
     </div>
-    <div id="portfolio">
-      <h3>Portfolio</h3>
-      <!-- Open Positions -->
+    <!-- Open Positions -->
+    <div class="mb-3"
+         id="portfolio">
+      <h5 >Recent Trades <small class="ml-3"><a href="">View All</a></small></h5>
       <table class="table"
              id="portfolio-table">
         <thead>
@@ -39,14 +80,30 @@
           {% for trade in trades %}
             {% if trade.status=="open" %}
               <tr>
-                <td>{{ trade.id }}</td>
-                <td>{{ trade.get_date("entry") }}</td>
-                <td class="text-center">{{ trade.symbol.upper() }}</td>
-                <td class="text-center">{{ trade.trade_type }}</td>
-                <td class="text-center">{{ trade.qty }}</td>
-                <td class="text-center">{{ trade.entry_price }}</td>
-                <td class="text-center">{{ trade.latest_price }}</td>
-                <td class="text-center">{{ trade.get_pnl() }}</td>
+                <td>
+                  {{ trade.id }}
+                </td>
+                <td>
+                  {{ trade.get_date("entry") }}
+                </td>
+                <td class="text-center">
+                  {{ trade.symbol.upper() }}
+                </td>
+                <td class="text-center">
+                  {{ trade.trade_type }}
+                </td>
+                <td class="text-center">
+                  {{ trade.qty }}
+                </td>
+                <td class="text-center">
+                  {{ trade.entry_price }}
+                </td>
+                <td class="text-center">
+                  {{ trade.latest_price }}
+                </td>
+                <td class="text-center">
+                  {{ trade.get_pnl() }}
+                </td>
                 <td class="text-center">
                   <button id="trade-exit-btn" class="btn btn-danger btn-sm" data-trade-id={{ trade.id }}>Close
                   </button>
@@ -58,20 +115,32 @@
       </table>
     </div>
     <div id="closed-positions">
-      <h3>Closed Positions</h3>
+      <h5>
+        Closed Positions
+      </h5>
       <!-- Closed Positions -->
       <table class="table"
              id="closed-trades-table">
         <thead>
           <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Timestamp</th>
+            <th scope="col">
+              ID
+            </th>
+            <th scope="col">
+              Timestamp
+            </th>
             <th scope="col"
-                class="text-center">Symbol</th>
+                class="text-center">
+              Symbol
+            </th>
             <th scope="col"
-                class="text-center">Type</th>
+                class="text-center">
+              Type
+            </th>
             <th scope="col"
-                class="text-center">Quantity</th>
+                class="text-center">
+              Quantity
+            </th>
             <th scope="col"
                 class="text-center">
               Entry Price

@@ -3,8 +3,9 @@ from flask_bcrypt import Bcrypt
 
 bcrypt = Bcrypt()
 
-# Default starting account balance
+# Default starting account balance and margin requirement
 STARTING_BALANCE = 50000
+MARGIN_REQUIREMENT = 0.1
 
 
 class User(db.Model):
@@ -19,6 +20,7 @@ class User(db.Model):
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     account_balance = db.Column(db.Float, nullable=False)
+    margin_requirement = db.Column(db.Float, nullable=False)
 
     trades = db.relationship("Trade", backref="user")
     watchlists = db.relationship("Watchlist", backref="user")
@@ -43,7 +45,8 @@ class User(db.Model):
                     email=email,
                     first_name=first_name,
                     last_name=last_name,
-                    account_balance=STARTING_BALANCE)
+                    account_balance=STARTING_BALANCE,
+                    margin_requirement=MARGIN_REQUIREMENT)
         db.session.add(user)
         db.session.commit()
         return user
@@ -68,7 +71,7 @@ class User(db.Model):
         """Change user password
 
         Returns True if successful, else returns False"""
-        
+
         # Authenticate user
         if User.authenticate(username=username, password=current_password) == False:
             return False
@@ -136,5 +139,36 @@ class User(db.Model):
         else:
             return self.account_balance
 
-    # @classmethod
-    # def check_user_login_status()
+    def get_equity(self):
+        """Get user equity
+
+        equity = account balance + sum of unrealized PnL for all trades"""
+
+        # Get open trades
+        open_trades = [
+            trade for trade in self.trades if trade.status == "open"]
+
+        # Calculate value of open trades
+        total_pnl = 0
+        for trade in open_trades:
+            total_pnl += trade.get_pnl()
+
+        # Return equity
+        return self.account_balance + total_pnl
+
+    def get_margin_available(self):
+        """Get user's available margin
+
+        Available margin = account balance - margin used by all trades"""
+
+        # Get open trades
+        open_trades = [
+            trade for trade in self.trades if trade.status == "open"]
+
+        # Get total margin used
+        total_margin_used = 0
+        for trade in open_trades:
+            total_margin_used += trade.get_trade_margin()
+
+        # Return margin available
+        return self.account_balance - total_margin_used

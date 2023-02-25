@@ -26,8 +26,10 @@ def show_user_dashboard(user_id):
 
     # Update latest quotes for all open trades
     Trade.update_latest_prices()
+
+    # Get 5 recent trades
     trades = Trade.query.filter(
-        Trade.user_id == user_id).order_by(Trade.entry_date).all()
+        Trade.user_id == user_id).order_by(Trade.entry_date).limit(5).all()
 
     return render_template("dashboard.html", user=user, trades=trades)
 

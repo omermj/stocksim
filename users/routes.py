@@ -3,6 +3,7 @@ from users.models import User
 from trades.models import Trade
 from auth.forms import UserEditForm, ChangePasswordForm
 from users.forms import ChangeAccountSettings
+from auth.login import Login
 
 users = Blueprint("users", __name__, template_folder="templates")
 
@@ -13,13 +14,9 @@ def user_home():
 
 
 @users.route("/<int:user_id>")
+@Login.require_login
 def show_user_dashboard(user_id):
     """Displays user dashboard"""
-
-    # Authenticate user
-    if g.user is None or g.user.id != user_id:
-        flash("You do not have permission to view this page.", "danger")
-        return redirect(url_for("auth.login"))
 
     # Get the user
     user = User.query.get(user_id)
@@ -39,13 +36,9 @@ def show_user_dashboard(user_id):
 
 
 @users.route("/<int:user_id>/profile", methods=["GET", "POST"])
+@Login.require_login
 def show_user_profile(user_id):
     """Shows user profile"""
-
-    # Authenticate user
-    if g.user is None or g.user.id != user_id:
-        flash("You do not have permission to view this page.", "danger")
-        return redirect(url_for("auth.login"))
 
     # Get the user
     user = User.query.get(user_id)
@@ -66,13 +59,9 @@ def show_user_profile(user_id):
 
 
 @users.route("/<int:user_id>/changepassword", methods=["GET", "POST"])
+@Login.require_login
 def change_password(user_id):
     """Shows user profile"""
-
-    # Authenticate user
-    if g.user is None or g.user.id != user_id:
-        flash("You do not have permission to view this page.", "danger")
-        return redirect(url_for("auth.login"))
 
     # Get the user
     user = User.query.get(user_id)
@@ -96,13 +85,9 @@ def change_password(user_id):
 
 
 @users.route("/<int:user_id>/settings", methods=["GET", "POST"])
+@Login.require_login
 def change_settings(user_id):
     """Chage user account settings (depost/withdraw funds)"""
-
-    # Authenticate user
-    if g.user is None or g.user.id != user_id:
-        flash("You do not have permission to view this page.", "danger")
-        return redirect(url_for("auth.login"))
 
     # Get the user
     user = User.query.get(user_id)

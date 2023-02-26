@@ -3,24 +3,23 @@ from sqlalchemy.exc import IntegrityError
 from users.models import User
 from auth.forms import UserAddForm, UserLoginForm
 from db import db
+from auth.login import Login, CURR_USER_KEY
 
-# Current user key in session
-CURR_USER_KEY = "curr_user"
 
 auth = Blueprint("auth", __name__, template_folder="templates")
 
 
-def do_login(user):
-    """Login user."""
+# def do_login(user):
+#     """Login user."""
 
-    session[CURR_USER_KEY] = user.id
+#     session[CURR_USER_KEY] = user.id
 
 
-def do_logout():
-    """Logout user."""
+# def do_logout():
+#     """Logout user."""
 
-    if CURR_USER_KEY in session:
-        del session[CURR_USER_KEY]
+#     if CURR_USER_KEY in session:
+#         del session[CURR_USER_KEY]
 
 
 @auth.route("/signup", methods=["POST", "GET"])
@@ -46,7 +45,7 @@ def signup():
             flash("Username already taken.", "danger")
             return render_template("signup.html", form=form)
         else:
-            do_login(user)
+            Login.do_login(user)
             flash("Thank you for signing up to StockSim. Happy Trading!.", "success")
             return redirect(url_for("users.show_user_dashboard", user_id=user.id))
     else:
@@ -68,7 +67,7 @@ def login():
                                  password=form.password.data)
 
         if user:
-            do_login(user)
+            Login.do_login(user)
             flash(
                 f"Login successful. Welcome back {user.username}.", "success")
             return redirect(url_for("users.show_user_dashboard", user_id=user.id))
@@ -84,7 +83,7 @@ def logout():
 
     # Check if a there is a logged in user
     if g.user:
-        do_logout()
+        Login.do_logout()
         flash("You have been logged out.", "secondary")
 
     return redirect(url_for("show_homepage"))

@@ -43,11 +43,11 @@
           </li>
           <li class="nav-item">
             <a class="nav-link"
-               href="/trades/new">New Trade</a>
+               href="/trades/open">Open Positions</a>
           </li>
           <li class="nav-item">
             <a class="nav-link"
-               href="#">Trading History</a>
+               href="/trades/history">Trading History</a>
           </li>
           <li class="nav-item">
             <a class="nav-link"
@@ -66,6 +66,10 @@
                href="/auth/login">Login</a>
           </li>
         {% else %}
+        <li class="nav-item">
+            <a class="btn btn-success mr-4 px-3"
+               href="/trades/new">New Trade</a>
+          </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle"
                href="#"

@@ -172,3 +172,31 @@ class User(db.Model):
 
         # Return margin available
         return self.account_balance - total_margin_used
+
+    def get_realized_gain(self):
+        """Get total realized gain or loss for the user"""
+
+        total = 0
+        for trade in self.trades:
+            total += trade.get_pnl() if trade.status == "closed" else 0
+
+        return total
+
+    def get_unrealized_gain(self):
+        """Get total unrealized gain or loss for the user"""
+
+        total = 0
+        for trade in self.trades:
+            total += trade.get_pnl() if trade.status == "open" else 0
+
+        return total
+
+    def get_account_growth_percent(self):
+        """Get account growth percentage"""
+
+        return (self.get_realized_gain() / STARTING_BALANCE)
+
+    def get_equity_growth_percent(self):
+        """Get account growth percentage"""
+
+        return (self.get_equity() / STARTING_BALANCE - 1)

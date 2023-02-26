@@ -6,7 +6,7 @@
 
 {% block content %}
   <div class="container-fluid mt-4">
-    <div class="card-deck mb-3 justify-content-center"
+    <div class="card-deck mb-3 justify-content-center "
          id="account-balance-container">
       <!--Cards-->
       <div class="card border-light mb-3"
@@ -14,7 +14,7 @@
         <div class="card-header text-center text-light font-weight-bold bg-primary">ACCOUNT BALANCE</div>
         <div class="card-body">
           <h3 class="card-title text-center">{{ "${:,.2f}".format(user.account_balance) }}</h3>
-          <p class="card-text text-center text-success">+5.00%</p>
+          <p class="card-text text-center text-success">{{ "{:.2}".format(user.get_account_growth_percent()*100) }}%</p>
         </div>
       </div>
       <div class="card border-light mb-3"
@@ -22,7 +22,7 @@
         <div class="card-header text-center text-light font-weight-bold bg-primary">EQUITY</div>
         <div class="card-body">
           <h3 class="card-title text-center">{{ "${:,.2f}".format(user.get_equity()) }}</h3>
-          <p class="card-text text-center text-success">+3.67%</p>
+          <p class="card-text text-center text-success">{{ "{:.2}".format(user.get_equity_growth_percent()*100) }}%</p>
         </div>
       </div>
       <div class="card border-light mb-3"
@@ -30,65 +30,60 @@
         <div class="card-header text-center text-light font-weight-bold bg-primary">BUYING POWER</div>
         <div class="card-body">
           <h3 class="card-title text-center">{{ "${:,.2f}".format(user.get_margin_available()) }}</h3>
-          <p class="card-text text-center text-success">+3.67%</p>
         </div>
       </div>
       <div class="card border-light mb-3"
            style="max-width: 18rem">
         <div class="card-header text-center text-light font-weight-bold bg-primary">REALIZED GAIN/LOSS</div>
         <div class="card-body">
-          <h3 class="card-title text-center">$76.04</h3>
-          <p class="card-text text-center text-success">+3.67%</p>
+          <h3 class="card-title text-center">{{ "${:,.2f}".format(user.get_realized_gain()) }}</h3>
         </div>
       </div>
       <div class="card border-light mb-3"
            style="max-width: 18rem">
         <div class="card-header text-center text-light font-weight-bold bg-primary">UNREALIZED GAIN/LOSS</div>
         <div class="card-body">
-          <h3 class="card-title text-center">$52.04</h3>
-          <p class="card-text text-center text-success">+1.67%</p>
+          <h3 class="card-title text-center">{{ "${:,.2f}".format(user.get_unrealized_gain()) }}</h3>
         </div>
       </div>
     </div>
     <!-- Open Positions -->
     <div class="mb-3"
          id="portfolio">
-      <h5 >Recent Trades <small class="ml-3"><a href="">View All</a></small></h5>
-      <table class="table"
-             id="portfolio-table">
-        <thead>
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Timestamp</th>
-            <th scope="col"
-                class="text-center">Symbol</th>
-            <th scope="col"
-                class="text-center">Type</th>
-            <th scope="col"
-                class="text-center">Quantity</th>
-            <th scope="col"
-                class="text-center">Entry Price</th>
-            <th scope="col"
-                class="text-center">Current Price</th>
-            <th scope="col"
-                class="text-center">Unrealized P/L</th>
-            <th scope="col"
-                class="text-center">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for trade in trades %}
-            {% if trade.status=="open" %}
+      <h5 >
+        Recent Trades <small class="ml-3"></small>
+      </h5>
+      {% if open_trades|length == 0 %}
+        <p class="mb-5">There are no open trades.</p>
+      {% else %}
+        <table class="table"
+               id="portfolio-table">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Timestamp</th>
+              <th scope="col"
+                  class="text-center">Symbol</th>
+              <th scope="col"
+                  class="text-center">Type</th>
+              <th scope="col"
+                  class="text-center">Quantity</th>
+              <th scope="col"
+                  class="text-center">Entry Price</th>
+              <th scope="col"
+                  class="text-center">Current Price</th>
+              <th scope="col"
+                  class="text-center">Unrealized P/L</th>
+              <th scope="col"
+                  class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for trade in open_trades %}
               <tr>
-                <td>
-                  {{ trade.id }}
-                </td>
-                <td>
-                  {{ trade.get_date("entry") }}
-                </td>
-                <td class="text-center">
-                  {{ trade.symbol.upper() }}
-                </td>
+                <td>{{ trade.id }}</td>
+                <td>{{ trade.get_date("entry") }}</td>
+                <td class="text-center">{{ trade.symbol.upper() }}</td>
                 <td class="text-center">
                   {{ trade.trade_type }}
                 </td>
@@ -109,55 +104,59 @@
                   </button>
                 </td>
               </tr>
-            {% endif %}
-          {% endfor %}
-        </tbody>
-      </table>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
     </div>
     <div id="closed-positions">
       <h5>
         Closed Positions
       </h5>
-      <!-- Closed Positions -->
-      <table class="table"
-             id="closed-trades-table">
-        <thead>
-          <tr>
-            <th scope="col">
-              ID
-            </th>
-            <th scope="col">
-              Timestamp
-            </th>
-            <th scope="col"
-                class="text-center">
-              Symbol
-            </th>
-            <th scope="col"
-                class="text-center">
-              Type
-            </th>
-            <th scope="col"
-                class="text-center">
-              Quantity
-            </th>
-            <th scope="col"
-                class="text-center">
-              Entry Price
-            </th>
-            <th scope="col"
-                class="text-center">
-              Exit Price
-            </th>
-            <th scope="col"
-                class="text-center">
-              Realized P/L
-            </th>
-          </tr>
-        </thead>
-        <tbody id="tbody-closed-trades">
-          {% for trade in trades %}
-            {% if trade.status=="closed" %}
+      {% if open_trades|length == 0 %}
+        <p class="mb-5">
+          There are no closed positions.
+        </p>
+      {% else %}
+        <!-- Closed Positions -->
+        <table class="table"
+               id="closed-trades-table">
+          <thead>
+            <tr>
+              <th scope="col">
+                ID
+              </th>
+              <th scope="col">
+                Timestamp
+              </th>
+              <th scope="col"
+                  class="text-center">
+                Symbol
+              </th>
+              <th scope="col"
+                  class="text-center">
+                Type
+              </th>
+              <th scope="col"
+                  class="text-center">
+                Quantity
+              </th>
+              <th scope="col"
+                  class="text-center">
+                Entry Price
+              </th>
+              <th scope="col"
+                  class="text-center">
+                Exit Price
+              </th>
+              <th scope="col"
+                  class="text-center">
+                Realized P/L
+              </th>
+            </tr>
+          </thead>
+          <tbody id="tbody-closed-trades">
+            {% for trade in closed_trades %}
               <tr>
                 <td>
                   {{ trade.id }}
@@ -184,10 +183,10 @@
                   {{ trade.get_pnl() }}
                 </td>
               </tr>
-            {% endif %}
-          {% endfor %}
-        </tbody>
-      </table>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
     </div>
   </div>
 {% endblock content %}

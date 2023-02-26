@@ -40,7 +40,6 @@ async function handleNewTradeSubmission(e) {
 
   // Else, show the trade entry results
   else {
-    console.log(response.data);
     const trade = response.data;
     $("#trade-response").text(
       `The trade is successfully placed. Bought ${trade.qty} shares of
@@ -72,7 +71,6 @@ async function handleTradeExit(e) {
   // If successful, update portfolio and closed trades
   if (response.data["result"] === "successful") {
     $(this).parents("tr").remove();
-    console.log(response.data);
     addClosedTrade(response.data);
     $("#account-balance").html(
       `Account Balance: $${response.data["account_balance"].toLocaleString()}`

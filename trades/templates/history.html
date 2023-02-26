@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Trading History
+{% endblock title %}
+
+{% block content %}
+  <div class="container mt-3">
+    <!-- Closed Positions -->
+    <div id="closed-positions">
+      <h5>Closed Positions</h5>
+      <table class="table"
+             id="closed-trades-table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Timestamp</th>
+            <th scope="col"
+                class="text-center">Symbol</th>
+            <th scope="col"
+                class="text-center">Type</th>
+            <th scope="col"
+                class="text-center">Quantity</th>
+            <th scope="col"
+                class="text-center">Entry Price</th>
+            <th scope="col"
+                class="text-center">Exit Price</th>
+            <th scope="col"
+                class="text-center">Realized P/L</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-closed-trades">
+          {% for trade in trades %}
+            {% if trade.status=="closed" %}
+              <tr>
+                <td>{{ trade.id }}</td>
+                <td>{{ trade.get_date("entry") }}</td>
+                <td class="text-center">{{ trade.symbol.upper() }}</td>
+                <td class="text-center">{{ trade.trade_type }}</td>
+                <td class="text-center">{{ trade.qty }}</td>
+                <td class="text-center">{{ trade.entry_price }}</td>
+                <td class="text-center">{{ trade.latest_price }}</td>
+                <td class="text-center">{{ trade.get_pnl() }}</td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock content %}

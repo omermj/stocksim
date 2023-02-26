@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Open Positions
+{% endblock title %}
+
+{% block content %}
+  <div class="container mt-3">
+    <!-- Open Positions -->
+    <div class="mb-3"
+         id="portfolio">
+      <h5 >Open Positions</h5>
+      <table class="table"
+             id="portfolio-table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Timestamp</th>
+            <th scope="col"
+                class="text-center">Symbol</th>
+            <th scope="col"
+                class="text-center">Type</th>
+            <th scope="col"
+                class="text-center">Quantity</th>
+            <th scope="col"
+                class="text-center">Entry Price</th>
+            <th scope="col"
+                class="text-center">Current Price</th>
+            <th scope="col"
+                class="text-center">Unrealized P/L</th>
+            <th scope="col"
+                class="text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for trade in trades %}
+            {% if trade.status=="open" %}
+              <tr>
+                <td>{{ trade.id }}</td>
+                <td>{{ trade.get_date("entry") }}</td>
+                <td class="text-center">{{ trade.symbol.upper() }}</td>
+                <td class="text-center">{{ trade.trade_type }}</td>
+                <td class="text-center">{{ trade.qty }}</td>
+                <td class="text-center">{{ trade.entry_price }}</td>
+                <td class="text-center">{{ trade.latest_price }}</td>
+                <td class="text-center">{{ trade.get_pnl() }}</td>
+                <td class="text-center">
+                  <button id="trade-exit-btn" class="btn btn-danger btn-sm" data-trade-id={{ trade.id }}>Close
+                  </button>
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock content %}

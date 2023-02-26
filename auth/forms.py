@@ -1,41 +1,58 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, EmailField
-from wtforms.validators import DataRequired, Email, Length, EqualTo
+from wtforms.validators import DataRequired, Email, Length, EqualTo, Regexp
 
 
 class UserAddForm(FlaskForm):
     """Add user form"""
 
     username = StringField("Username", validators=[
-                           DataRequired(), Length(max=50)])
+                           DataRequired(
+                               message="Username cannot be blank"),
+                           Length(min=4, max=50,
+                                  message="Username must be between 4 and 50 characters"),
+                           Regexp("^[a-zA-Z]+[a-zA-Z0-9]*$",
+                                  message="Username can only include letters and numbers and must start with a letter")])
     first_name = StringField("First Name", validators=[
-                             DataRequired(), Length(max=50)])
+        DataRequired(message="First Name cannot be blank"),
+        Length(max=50, message="First Name must be between 4 and 50 characters")])
+
     last_name = StringField("Last Name", validators=[
-                            DataRequired(), Length(max=50)])
-    email = EmailField("Email", validators=[DataRequired(), Email(),
-                                            Length(max=50)])
+        DataRequired(message="Last Name cannot be blank"),
+        Length(max=50, message="Last Name must be between 4 and 50 characters")])
+
+    email = EmailField("Email", validators=[
+        DataRequired(message="Email cannot be blank"),
+        Email(message="Please provide a valid email address"),
+        Length(max=50)])
     password = PasswordField("Password", validators=[
-                             DataRequired(), Length(min=6, max=50)])
+        DataRequired(message="Password cannot be blank"),
+        Length(min=6, max=50, message="Password must be between 6 and 50 characters")])
 
 
 class UserLoginForm(FlaskForm):
     """User login form"""
 
     username = StringField("Username", validators=[
-                           DataRequired(), Length(max=50)])
+                           DataRequired(
+                               message="Username cannot be blank"),
+                           Length(min=4, max=50,
+                                  message="Username must be between 4 and 50 characters"),
+                           Regexp("^[a-zA-Z]+[a-zA-Z0-9]*$",
+                                  message="Username can only include letters and numbers and must start with a letter")])
     password = PasswordField("Password", validators=[
-                             DataRequired(), Length(min=6, max=50)])
-
+        DataRequired(message="Password cannot be blank"),
+        Length(min=6, max=50, message="Password must be between 6 and 50 characters")])
 
 class UserEditForm(FlaskForm):
     """User profile edit form"""
 
     username = StringField("Username", validators=[
-                           DataRequired(), Length(max=50)])
+        DataRequired(), Length(max=50)])
     first_name = StringField("First Name", validators=[
-                             DataRequired(), Length(max=50)])
+        DataRequired(), Length(max=50)])
     last_name = StringField("Last Name", validators=[
-                            DataRequired(), Length(max=50)])
+        DataRequired(), Length(max=50)])
     email = EmailField("Email", validators=[DataRequired(), Email(),
                                             Length(max=50)])
 
@@ -46,7 +63,7 @@ class ChangePasswordForm(FlaskForm):
         DataRequired(), Length(min=6, max=50)])
     new_password = PasswordField("New Password", validators=[
         DataRequired(), Length(min=6, max=50)])
-    new_password_retype = PasswordField("Re-type New Password",
+    new_password_retype = PasswordField("Confirm Password",
                                         validators=[DataRequired(),
                                                     Length(min=6, max=50),
                                                     EqualTo("new_password",

@@ -85,3 +85,27 @@ def exit_trade(trade_id):
                         })
     else:
         return jsonify({"result": "unsuccessful"})
+
+
+@trades.route("/open")
+def show_open_positions():
+    """Show all open positions for the logged in user"""
+
+    # Validate if user is logged in
+    if not g.user:
+        flash("You do not have permission to view this page.", "danger")
+        return redirect(url_for("auth.login"))
+    
+    return render_template("open_positions.html", trades=g.user.trades)
+
+
+@trades.route("/history")
+def show_trading_history():
+    """Show all trading history for the logged in user"""
+
+    # Validate if user is logged in
+    if not g.user:
+        flash("You do not have permission to view this page.", "danger")
+        return redirect(url_for("auth.login"))
+    
+    return render_template("history.html", trades=g.user.trades)

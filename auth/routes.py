@@ -47,6 +47,7 @@ def signup():
             return render_template("signup.html", form=form)
         else:
             do_login(user)
+            flash("Thank you for signing up to StockSim. Happy Trading!.", "success")
             return redirect(url_for("users.show_user_dashboard", user_id=user.id))
     else:
         return render_template("signup.html", form=form)

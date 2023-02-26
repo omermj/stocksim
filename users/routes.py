@@ -27,11 +27,15 @@ def show_user_dashboard(user_id):
     # Update latest quotes for all open trades
     Trade.update_latest_prices()
 
-    # Get 5 recent trades
-    trades = Trade.query.filter(
-        Trade.user_id == user_id).order_by(Trade.entry_date).limit(5).all()
+    # Get 5 recent open trades
+    open_trades = Trade.query.filter(
+        (Trade.user_id == user_id) & (Trade.status == "open")).order_by(Trade.entry_date).limit(5).all()
 
-    return render_template("dashboard.html", user=user, trades=trades)
+    # # Get 5 recent closed trades
+    closed_trades = Trade.query.filter(
+        (Trade.user_id == user_id) & (Trade.status == "closed")).order_by(Trade.entry_date).limit(5)
+
+    return render_template("dashboard.html", user=user, open_trades=open_trades, closed_trades=closed_trades)
 
 
 @users.route("/<int:user_id>/profile", methods=["GET", "POST"])
@@ -51,11 +55,9 @@ def show_user_profile(user_id):
 
     # If form data is submitted
     if form.validate_on_submit():
-        response = user.edit_profile(first_name=form.first_name.data,
-                                     last_name=form.last_name.data,
-                                     email=form.email.data)
-        print("#####################")
-        print(response)
+        response = user.edit_profile(first_name=form.first_name.data.strip(),
+                                     last_name=form.last_name.data.strip(),
+                                     email=form.email.data.strip())
         if response:
             flash("User profile is updated.", "success")
             return redirect(url_for("users.show_user_dashboard", user_id=user.id))

@@ -32,7 +32,7 @@ async function handleNewTradeSubmission(e) {
       $("#qty-error").removeClass("d-none");
     }
     if (response.data.error.type === "others") {
-      $("#trade-response").text(response.data.error);
+      $("#trade-response").text(response.data.error.message);
       $("#trade-response").addClass("text-danger");
       $("#enter-trade-output").removeClass("d-none");
     }

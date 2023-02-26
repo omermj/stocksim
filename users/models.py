@@ -194,7 +194,7 @@ class User(db.Model):
     def get_account_growth_percent(self):
         """Get account growth percentage"""
 
-        return (self.get_realized_gain() / STARTING_BALANCE)
+        return (self.account_balance / STARTING_BALANCE - 1)
 
     def get_equity_growth_percent(self):
         """Get account growth percentage"""

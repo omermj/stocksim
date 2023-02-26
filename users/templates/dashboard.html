@@ -15,7 +15,7 @@
         <div class="card-body">
           <h3 class="card-title text-center"
               id="account-balance">{{ "${:,.2f}".format(user.account_balance) }}</h3>
-          <p class="card-text text-center text-success">{{ "{:.2}".format(user.get_account_growth_percent()*100) }}%</p>
+          <p class="card-text text-center text-success">{{ "{:.2f}".format(user.get_account_growth_percent()*100) }}%</p>
         </div>
       </div>
       <div class="card border-light mb-3"
@@ -24,7 +24,7 @@
         <div class="card-body">
           <h3 class="card-title text-center"
               id="equity">{{ "${:,.2f}".format(user.get_equity()) }}</h3>
-          <p class="card-text text-center text-success">{{ "{:.2}".format(user.get_equity_growth_percent()*100) }}%</p>
+          <p class="card-text text-center text-success">{{ "{:.2f}".format(user.get_equity_growth_percent()*100) }}%</p>
         </div>
       </div>
       <div class="card border-light mb-3"

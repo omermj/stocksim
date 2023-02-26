@@ -1,4 +1,4 @@
-from flask import redirect, render_template, flash, Blueprint, url_for, g
+from flask import redirect, render_template, flash, Blueprint, url_for, g, jsonify
 from users.models import User
 from trades.models import Trade
 from auth.forms import UserEditForm, ChangePasswordForm
@@ -29,11 +29,11 @@ def show_user_dashboard(user_id):
 
     # Get 5 recent open trades
     open_trades = Trade.query.filter(
-        (Trade.user_id == user_id) & (Trade.status == "open")).order_by(Trade.entry_date).limit(5).all()
+        (Trade.user_id == user_id) & (Trade.status == "open")).order_by(Trade.entry_date.desc()).limit(5).all()
 
     # # Get 5 recent closed trades
     closed_trades = Trade.query.filter(
-        (Trade.user_id == user_id) & (Trade.status == "closed")).order_by(Trade.entry_date).limit(5)
+        (Trade.user_id == user_id) & (Trade.status == "closed")).order_by(Trade.entry_date.desc()).limit(5)
 
     return render_template("dashboard.html", user=user, open_trades=open_trades, closed_trades=closed_trades)
 
@@ -125,3 +125,25 @@ def change_settings(user_id):
             return redirect(url_for("users.show_user_dashboard", user_id=user.id))
 
     return render_template("settings.html", user=user, form=form)
+
+
+@users.route("/<int:user_id>/info")
+def get_user_data(user_id):
+    """GET user info"""
+
+    # Authenticate user
+    if g.user is None or g.user.id != user_id:
+        return jsonify({"error", "not authenticated"})
+
+    # Get user data
+    user = User.query.get(user_id)
+
+    return jsonify({
+        "username": user.username,
+        "account_balance": user.account_balance,
+        "equity": user.get_equity(),
+        "margin_available": user.get_margin_available(),
+        "realized_gain": user.get_realized_gain(),
+        "unrealized_gain": user.get_unrealized_gain(),
+        "account_growth_percent": user.get_account_growth_percent()
+    })

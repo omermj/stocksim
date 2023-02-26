@@ -1,5 +1,5 @@
 //---------------------------
-// Trade Enter Code
+// Trade Enter
 //---------------------------
 
 // New Trade Form Submission
@@ -54,7 +54,7 @@ async function handleNewTradeSubmission(e) {
 }
 
 //---------------------------
-// Trade Exit Code
+// Trade Exit
 //---------------------------
 
 $("#portfolio-table").on("click", "#trade-exit-btn", handleTradeExit);
@@ -66,15 +66,23 @@ async function handleTradeExit(e) {
   const tradeId = $(this).data().tradeId;
 
   // Send PUT rquest to exit trade
-  response = await axios.put(`/trades/${tradeId}`);
+  const response = await axios.put(`/trades/${tradeId}`);
 
   // If successful, update portfolio and closed trades
   if (response.data["result"] === "successful") {
+    // Update recent trades and closed posiitons table
     $(this).parents("tr").remove();
     addClosedTrade(response.data);
-    $("#account-balance").html(
-      `Account Balance: $${response.data["account_balance"].toLocaleString()}`
-    );
+
+    // Update account metrics
+    const userId = response.data["user_id"];
+    const userInfo = await axios.get(`/users/${userId}/info`);
+    console.log(userInfo);
+    $("#account-balance").html(parseCurrency(userInfo.data["account_balance"]));
+    $("#equity").html(parseCurrency(userInfo.data["equity"]));
+    $("#buying-power").html(parseCurrency(userInfo.data["margin_available"]));
+    $("#realized-gain").html(parseCurrency(userInfo.data["realized_gain"]));
+    $("#unrealized-gain").html(parseCurrency(userInfo.data["unrealized_gain"]));
   }
 }
 
@@ -109,4 +117,14 @@ function addClosedTrade(trade) {
               </tr>`;
 
   $("#tbody-closed-trades").append($tr);
+}
+
+function parseCurrency(num) {
+  return (
+    "$" +
+    num.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })
+  );
 }

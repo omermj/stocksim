@@ -81,7 +81,8 @@ def exit_trade(trade_id):
                         "exit_price": trade.latest_price,
                         "exit_date": trade.exit_date,
                         "pnl": trade.get_pnl(),
-                        "account_balance": trade.user.account_balance
+                        "account_balance": trade.user.account_balance,
+                        "user_id": trade.user.id
                         })
     else:
         return jsonify({"result": "unsuccessful"})

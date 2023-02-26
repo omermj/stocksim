@@ -13,7 +13,8 @@
            style="max-width: 18rem">
         <div class="card-header text-center text-light font-weight-bold bg-primary">ACCOUNT BALANCE</div>
         <div class="card-body">
-          <h3 class="card-title text-center">{{ "${:,.2f}".format(user.account_balance) }}</h3>
+          <h3 class="card-title text-center"
+              id="account-balance">{{ "${:,.2f}".format(user.account_balance) }}</h3>
           <p class="card-text text-center text-success">{{ "{:.2}".format(user.get_account_growth_percent()*100) }}%</p>
         </div>
       </div>
@@ -21,7 +22,8 @@
            style="max-width: 18rem">
         <div class="card-header text-center text-light font-weight-bold bg-primary">EQUITY</div>
         <div class="card-body">
-          <h3 class="card-title text-center">{{ "${:,.2f}".format(user.get_equity()) }}</h3>
+          <h3 class="card-title text-center"
+              id="equity">{{ "${:,.2f}".format(user.get_equity()) }}</h3>
           <p class="card-text text-center text-success">{{ "{:.2}".format(user.get_equity_growth_percent()*100) }}%</p>
         </div>
       </div>
@@ -29,21 +31,24 @@
            style="max-width: 18rem">
         <div class="card-header text-center text-light font-weight-bold bg-primary">BUYING POWER</div>
         <div class="card-body">
-          <h3 class="card-title text-center">{{ "${:,.2f}".format(user.get_margin_available()) }}</h3>
+          <h3 class="card-title text-center"
+              id="buying-power">{{ "${:,.2f}".format(user.get_margin_available()) }}</h3>
         </div>
       </div>
       <div class="card border-light mb-3"
            style="max-width: 18rem">
         <div class="card-header text-center text-light font-weight-bold bg-primary">REALIZED GAIN/LOSS</div>
         <div class="card-body">
-          <h3 class="card-title text-center">{{ "${:,.2f}".format(user.get_realized_gain()) }}</h3>
+          <h3 class="card-title text-center"
+              id="realized-gain">{{ "${:,.2f}".format(user.get_realized_gain()) }}</h3>
         </div>
       </div>
       <div class="card border-light mb-3"
            style="max-width: 18rem">
         <div class="card-header text-center text-light font-weight-bold bg-primary">UNREALIZED GAIN/LOSS</div>
         <div class="card-body">
-          <h3 class="card-title text-center">{{ "${:,.2f}".format(user.get_unrealized_gain()) }}</h3>
+          <h3 class="card-title text-center"
+              id="unrealized-gain">{{ "${:,.2f}".format(user.get_unrealized_gain()) }}</h3>
         </div>
       </div>
     </div>

@@ -17,7 +17,7 @@ class Trade(db.Model):
     __tablename__ = "trades"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    type = db.Column(db.String, nullable=False)
+    trade_type = db.Column(db.String, nullable=False)
     qty = db.Column(db.Integer, nullable=False)
     entry_price = db.Column(db.Float, nullable=False)
     latest_price = db.Column(db.Float)
@@ -33,12 +33,12 @@ class Trade(db.Model):
         """Represent trade"""
 
         return (f"<Trade # {self.id} | Symbol: {self.stock.symbol} | "
-                f"Type: {self.type} | Qty: {self.qty} | "
+                f"Type: {self.trade_type} | Qty: {self.qty} | "
                 f"Entry: {self.entry_price} | Status: {self.status} | "
                 f"User: {self.user.username}>")
 
     @classmethod
-    def enter_trade(cls, symbol, type, qty, user_id):
+    def enter_trade(cls, symbol, trade_type, qty, user_id):
         """Enter new trade
 
         Return new trade if successful, else return error message as
@@ -52,8 +52,8 @@ class Trade(db.Model):
             }})
 
         # Validate trade type
-        if type(type) is not str or \
-                (type.lower() != "buy" and type.lower() != "sell"):
+        if type(trade_type) is not str or \
+                (trade_type.lower() != "buy" and trade_type.lower() != "sell"):
             return ({"error": {
                 "type": "others",
                 "message": "Trade type must be a string and can only be 'buy' or 'sell'."
@@ -74,13 +74,12 @@ class Trade(db.Model):
                 "message": "Sufficient buying power is not available. Please deposit more funds."
             }})
 
-        # Add trade to table
         try:
             # Add stock to Stock table
             stock = Stock.create(symbol)
 
             # Add trade to trade table
-            trade = Trade(type=type, qty=qty, entry_price=entry_price,
+            trade = Trade(trade_type=trade_type, qty=qty, entry_price=entry_price,
                           status="open", stock_id=stock.id, user_id=user.id)
             db.session.add(trade)
             db.session.commit()
@@ -108,7 +107,6 @@ class Trade(db.Model):
         self.exit_date = datetime.utcnow()
         self.status = "closed"
 
-        # Commit to db
         try:
             db.session.add(self)
             db.session.commit()
@@ -154,7 +152,7 @@ class Trade(db.Model):
                 }})
 
     @classmethod
-    def get_multiple_quotes(cls, symbols):
+    def get_latest_quotes(cls, symbols):
         """Calls Alpaca API and get the latest stock quotes for list of symbols
 
         Returns stock quotes as a dictionary {symbol: quote} if successful, 
@@ -179,43 +177,53 @@ class Trade(db.Model):
                 quotes[symbol] = round(response[symbol].latest_trade.price, 2)
             return quotes
 
+    def get_last_price(self):
+        """Gets last price for the trade
+
+        Returns last price if successful, else return False"""
+
+        try:
+            last_price = Trade.get_latest_quote(self.symbol)
+        except:
+            return False
+        else:
+            return round(last_price, 2)
+
     def get_pnl(self):
         """Returns profit or loss of trade"""
 
-        if self.type == "buy":
+        if self.trade_type == "buy":
             return round((self.latest_price - self.entry_price) * self.qty, 2)
         else:
             return round((self.entry_price - self.latest_price) * self.qty, 2)
 
-    # TODO: Check if can be deleted
-    # def get_date(self, transaction="entry"):
-    #     """Get formatted date/time for entry exit.
+    def get_date(self, transaction="entry"):
+        """Get formatted date/time for entry exit.
 
-    #     transaction can be "entry" or "exit". """
+        transaction can be "entry" or "exit". """
 
-    #     if transaction == "entry":
-    #         return self.entry_date.strftime("%Y/%m/%d - %I:%M %p")
-    #     else:
-    #         return self.exit_date.strftime("%Y/%m/%d - %I:%M %p")
+        if transaction == "entry":
+            return self.entry_date.strftime("%Y/%m/%d - %I:%M %p")
+        else:
+            return self.exit_date.strftime("%Y/%m/%d - %I:%M %p")
 
-    # TODO: Check if can be deleted
-    # @classmethod
-    # def get_all_trades(status="all"):
-    #     """Returns list of all trades
+    @classmethod
+    def get_all_trades(status="all"):
+        """Returns list of all trades
 
-    #     Args:
-    #         status (str, optional): "open" returns all open trades
-    #         "closed" returns all closed trades. Defaults to "all".
-    #     """
+        Args:
+            status (str, optional): "open" returns all open trades
+            "closed" returns all closed trades. Defaults to "all".
+        """
 
-    #     if status == "all":
-    #         return Trade.query.all()
-    #     elif status == "open":
-    #         return Trade.query.filter(Trade.status == "open").all()
-    #     elif status == "closed":
-    #         return Trade.query.filter(Trade.status == "closed").all()
-    #     else:
-    #         return None
+        if status == "all":
+            return Trade.query.all()
+        elif status == "open":
+            return Trade.query.filter(Trade.status == "open").all()
+        elif status == "closed":
+            return Trade.query.filter(Trade.status == "closed").all()
+        else:
+            return None
 
     @classmethod
     def update_latest_prices(cls):
@@ -227,7 +235,7 @@ class Trade(db.Model):
         symbols = [s[0] for s in Trade.query.with_entities(Trade.symbol).all()]
 
         try:
-            quotes = Trade.get_multiple_quotes(symbols)
+            quotes = Trade.get_latest_quotes(symbols)
 
             for symbol in quotes:
                 Trade.query.filter((Trade.symbol == symbol) & (Trade.status == "open")).update(

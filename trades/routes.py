@@ -41,7 +41,7 @@ def enter_new_trade():
     user_id = g.user.id
 
     # Enter the trade
-    response = Trade.enter_trade(symbol=symbol, type=type,
+    response = Trade.enter_trade(symbol=symbol, trade_type=type,
                                  qty=qty, user_id=user_id)
 
     # If reponse is not an instance of Trade (error in entering trade)
@@ -49,7 +49,7 @@ def enter_new_trade():
         return jsonify({"result": "successful",
                         "trade_id": response.id,
                         "symbol": response.symbol,
-                        "type": response.type,
+                        "type": response.trade_type,
                         "qty": response.qty,
                         "entry_price": response.entry_price
                         })
@@ -75,7 +75,7 @@ def exit_trade(trade_id):
         return jsonify({"result": "successful",
                         "trade_id": trade.id,
                         "symbol": trade.symbol,
-                        "type": trade.type,
+                        "type": trade.trade_type,
                         "qty": trade.qty,
                         "entry_price": trade.entry_price,
                         "exit_price": trade.latest_price,

@@ -107,6 +107,7 @@ class Trade(db.Model):
         self.exit_date = datetime.utcnow()
         self.status = "closed"
 
+        # Commit to db
         try:
             db.session.add(self)
             db.session.commit()
@@ -152,7 +153,7 @@ class Trade(db.Model):
                 }})
 
     @classmethod
-    def get_latest_quotes(cls, symbols):
+    def get_multiple_quotes(cls, symbols):
         """Calls Alpaca API and get the latest stock quotes for list of symbols
 
         Returns stock quotes as a dictionary {symbol: quote} if successful, 
@@ -177,17 +178,6 @@ class Trade(db.Model):
                 quotes[symbol] = round(response[symbol].latest_trade.price, 2)
             return quotes
 
-    def get_last_price(self):
-        """Gets last price for the trade
-
-        Returns last price if successful, else return False"""
-
-        try:
-            last_price = Trade.get_latest_quote(self.symbol)
-        except:
-            return False
-        else:
-            return round(last_price, 2)
 
     def get_pnl(self):
         """Returns profit or loss of trade"""
@@ -197,33 +187,34 @@ class Trade(db.Model):
         else:
             return round((self.entry_price - self.latest_price) * self.qty, 2)
 
-    def get_date(self, transaction="entry"):
-        """Get formatted date/time for entry exit.
+    # TODO: Check if these can be deleted
+    # def get_date(self, transaction="entry"):
+    #     """Get formatted date/time for entry exit.
 
-        transaction can be "entry" or "exit". """
+    #     transaction can be "entry" or "exit". """
 
-        if transaction == "entry":
-            return self.entry_date.strftime("%Y/%m/%d - %I:%M %p")
-        else:
-            return self.exit_date.strftime("%Y/%m/%d - %I:%M %p")
+    #     if transaction == "entry":
+    #         return self.entry_date.strftime("%Y/%m/%d - %I:%M %p")
+    #     else:
+    #         return self.exit_date.strftime("%Y/%m/%d - %I:%M %p")
 
-    @classmethod
-    def get_all_trades(status="all"):
-        """Returns list of all trades
+    # @classmethod
+    # def get_all_trades(status="all"):
+    #     """Returns list of all trades
 
-        Args:
-            status (str, optional): "open" returns all open trades
-            "closed" returns all closed trades. Defaults to "all".
-        """
+    #     Args:
+    #         status (str, optional): "open" returns all open trades
+    #         "closed" returns all closed trades. Defaults to "all".
+    #     """
 
-        if status == "all":
-            return Trade.query.all()
-        elif status == "open":
-            return Trade.query.filter(Trade.status == "open").all()
-        elif status == "closed":
-            return Trade.query.filter(Trade.status == "closed").all()
-        else:
-            return None
+    #     if status == "all":
+    #         return Trade.query.all()
+    #     elif status == "open":
+    #         return Trade.query.filter(Trade.status == "open").all()
+    #     elif status == "closed":
+    #         return Trade.query.filter(Trade.status == "closed").all()
+    #     else:
+    #         return None
 
     @classmethod
     def update_latest_prices(cls):
@@ -235,7 +226,7 @@ class Trade(db.Model):
         symbols = [s[0] for s in Trade.query.with_entities(Trade.symbol).all()]
 
         try:
-            quotes = Trade.get_latest_quotes(symbols)
+            quotes = Trade.get_multiple_quotes(symbols)
 
             for symbol in quotes:
                 Trade.query.filter((Trade.symbol == symbol) & (Trade.status == "open")).update(

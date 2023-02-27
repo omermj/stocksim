@@ -15,12 +15,19 @@ class Stock(db.Model):
     symbol = db.Column(db.String, nullable=False, unique=True)
     name = db.Column(db.String, nullable=False)
 
+    trades = db.relationship("Trade", backref="stock")
+
     @classmethod
     def create(cls, symbol):
         """Gets company's name from Alpaca API and creates stock
 
         Returns stock if successful, else returns False."""
 
+        # Check if stock already exists in table. If yes, then return stock
+        stock = Stock.query.filter(Stock.symbol==symbol).first()
+        if stock:
+            return stock
+        
         # Get stock name
         name = Stock.get_name(symbol)
 
@@ -36,7 +43,6 @@ class Stock(db.Model):
                 return stock
         else:
             return False
-
 
     @classmethod
     def get_name(cls, symbol):

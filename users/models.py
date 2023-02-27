@@ -3,9 +3,8 @@ from flask_bcrypt import Bcrypt
 
 bcrypt = Bcrypt()
 
-# Default starting account balance and margin requirement
+# Default starting account balance
 STARTING_BALANCE = 50000
-MARGIN_REQUIREMENT = 0.1
 
 
 class User(db.Model):
@@ -20,7 +19,6 @@ class User(db.Model):
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     account_balance = db.Column(db.Float, nullable=False)
-    margin_requirement = db.Column(db.Float, nullable=False)
 
     trades = db.relationship("Trade", backref="user")
     watchlists = db.relationship("Watchlist", backref="user")
@@ -45,8 +43,7 @@ class User(db.Model):
                     email=email,
                     first_name=first_name,
                     last_name=last_name,
-                    account_balance=STARTING_BALANCE,
-                    margin_requirement=MARGIN_REQUIREMENT)
+                    account_balance=STARTING_BALANCE)
         db.session.add(user)
         db.session.commit()
         return user
@@ -156,22 +153,22 @@ class User(db.Model):
         # Return equity
         return self.account_balance + total_pnl
 
-    def get_margin_available(self):
-        """Get user's available margin
+    def get_buying_power(self):
+        """Get user's available buying power
 
-        Available margin = account balance - margin used by all trades"""
+        Available buying power = account balance - buying power used by all trades"""
 
         # Get open trades
         open_trades = [
             trade for trade in self.trades if trade.status == "open"]
 
-        # Get total margin used
-        total_margin_used = 0
+        # Get total buying power used
+        buying_power_used = 0
         for trade in open_trades:
-            total_margin_used += trade.get_trade_margin()
+            buying_power_used += trade.get_trade_buying_power()
 
-        # Return margin available
-        return self.account_balance - total_margin_used
+        # Return buying power available
+        return self.account_balance - buying_power_used
 
     def get_realized_gain(self):
         """Get total realized gain or loss for the user"""

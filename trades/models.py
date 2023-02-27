@@ -4,6 +4,7 @@ from alpaca.data.requests import StockSnapshotRequest
 from alpaca.common import exceptions
 from datetime import datetime
 from users.models import User
+from stocks.models import Stock
 
 # TODO: MOVE API KEYS TO A SEPARATE FILE
 API_KEY = "PK0GRC1UBR3JTTNCPQA6"
@@ -16,7 +17,6 @@ class Trade(db.Model):
     __tablename__ = "trades"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    symbol = db.Column(db.String, nullable=False)
     trade_type = db.Column(db.String, nullable=False)
     qty = db.Column(db.Integer, nullable=False)
     entry_price = db.Column(db.Float, nullable=False)
@@ -26,10 +26,16 @@ class Trade(db.Model):
     status = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey(
         "users.id", ondelete="CASCADE"))
+    stock_id = db.Column(db.Integer, db.ForeignKey(
+        "stocks.id", ondelete="CASCADE"))
 
     def __repr__(self):
         """Represent trade"""
-        return f"<Trade # {self.id} | Symbol: {self.symbol}> | Type: {self.trade_type} | Qty: {self.qty} | Entry: {self.entry_price}>"
+
+        return (f"<Trade # {self.id} | Symbol: {self.stock.symbol} | "
+                f"Type: {self.trade_type} | Qty: {self.qty} | "
+                f"Entry: {self.entry_price} | Status: {self.status} | "
+                f"User: {self.user.username}>")
 
     @classmethod
     def enter_trade(cls, symbol, trade_type, qty, user_id):
@@ -60,17 +66,21 @@ class Trade(db.Model):
         if not isinstance(entry_price, float):
             return entry_price
 
-        # Check if margin is available
+        # Check if buying power is available
         user = User.query.get(user_id)
-        if (entry_price * qty) > user.get_margin_available():
+        if (entry_price * qty) > user.get_buying_power():
             return ({"error": {
                 "type": "others",
-                "message": "Sufficient margin is not available. Please deposit more funds."
+                "message": "Sufficient buying power is not available. Please deposit more funds."
             }})
 
         try:
-            trade = Trade(symbol=symbol, trade_type=trade_type, qty=qty,
-                          entry_price=entry_price, status="open", user_id=user_id)
+            # Add stock to Stock table
+            stock = Stock.create(symbol)
+
+            # Add trade to trade table
+            trade = Trade(trade_type=trade_type, qty=qty, entry_price=entry_price,
+                          status="open", stock_id=stock.id, user_id=user.id)
             db.session.add(trade)
             db.session.commit()
         except:
@@ -236,7 +246,7 @@ class Trade(db.Model):
         else:
             return True
 
-    def get_trade_margin(self):
-        """Returns margin used by trade"""
+    def get_trade_buying_power(self):
+        """Returns buying power used by trade"""
 
-        return self.entry_price * self.qty * self.user.margin_requirement
+        return self.entry_price * self.qty

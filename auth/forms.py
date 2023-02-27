@@ -3,7 +3,7 @@ from wtforms import StringField, PasswordField, EmailField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, Regexp
 
 
-class UserAddForm(FlaskForm):
+class SignupForm(FlaskForm):
     """Add user form"""
 
     username = StringField("Username", validators=[

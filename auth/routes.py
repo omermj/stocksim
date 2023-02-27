@@ -1,25 +1,12 @@
-from flask import render_template, flash, redirect, session, g, url_for, Blueprint
+from flask import render_template, flash, redirect, g, url_for, Blueprint
 from sqlalchemy.exc import IntegrityError
 from users.models import User
-from auth.forms import UserAddForm, UserLoginForm
-from db import db
+from auth.forms import SignupForm, UserLoginForm
 from auth.login import Login, CURR_USER_KEY
 
 
+
 auth = Blueprint("auth", __name__, template_folder="templates")
-
-
-# def do_login(user):
-#     """Login user."""
-
-#     session[CURR_USER_KEY] = user.id
-
-
-# def do_logout():
-#     """Logout user."""
-
-#     if CURR_USER_KEY in session:
-#         del session[CURR_USER_KEY]
 
 
 @auth.route("/signup", methods=["POST", "GET"])
@@ -32,24 +19,30 @@ def signup():
     if g.user:
         return redirect(url_for("users.show_user_dashboard", user_id=g.user.id))
 
-    form = UserAddForm()
+    # Render signup form
+    form = SignupForm()
 
+    # If form is submitted, validate data
     if form.validate_on_submit():
-        try:
-            user = User.signup(username=form.username.data,
-                               email=form.email.data,
-                               first_name=form.first_name.data,
-                               last_name=form.last_name.data,
-                               password=form.password.data)
-        except IntegrityError:
-            flash("Username already taken.", "danger")
+
+        # Create user in db
+        user = User.signup(username=form.username.data,
+                           email=form.email.data,
+                           first_name=form.first_name.data,
+                           last_name=form.last_name.data,
+                           password=form.password.data)
+
+        # If there is an error
+        if not isinstance(user, User):
+            flash(user["error"], "danger")
             return render_template("signup.html", form=form)
-        else:
-            Login.do_login(user)
-            flash("Thank you for signing up to StockSim. Happy Trading!.", "success")
-            return redirect(url_for("users.show_user_dashboard", user_id=user.id))
-    else:
-        return render_template("signup.html", form=form)
+
+        # Login user
+        Login.do_login(user)
+        flash("Thank you for signing up to StockSim. Happy Trading!.", "success")
+        return redirect(url_for("users.show_user_dashboard", user_id=user.id))
+
+    return render_template("signup.html", form=form)
 
 
 @auth.route("/login", methods=["POST", "GET"])
@@ -78,6 +71,7 @@ def login():
 
 
 @auth.route("/logout")
+@Login.require_login
 def logout():
     """Log out user."""
 

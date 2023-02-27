@@ -1,5 +1,6 @@
 from db import db
 from flask_bcrypt import Bcrypt
+from sqlalchemy.exc import IntegrityError
 
 bcrypt = Bcrypt()
 
@@ -31,22 +32,28 @@ class User(db.Model):
     def signup(cls, username, email, password, first_name, last_name):
         """Signup new user
 
-        Returns newly added user"""
+        Returns newly added user if successful, else return {"error": "message"}"""
 
-        # Check if username and email already exists in the database. If yes,
+        # Check if username already exists in the database. If yes,
         # return error
 
         hashed_pwd = bcrypt.generate_password_hash(password).decode("UTF-8")
 
-        user = User(username=username,
-                    password=hashed_pwd,
-                    email=email,
-                    first_name=first_name,
-                    last_name=last_name,
-                    account_balance=STARTING_BALANCE)
-        db.session.add(user)
-        db.session.commit()
-        return user
+        try:
+            user = User(username=username,
+                        password=hashed_pwd,
+                        email=email,
+                        first_name=first_name,
+                        last_name=last_name,
+                        account_balance=STARTING_BALANCE)
+            db.session.add(user)
+            db.session.commit()
+        except IntegrityError:
+            return {"error": "Username already taken"}
+        except:
+            return {"error": "An error occured while creating the account."}
+        else:
+            return user
 
     @classmethod
     def authenticate(cls, username, password):

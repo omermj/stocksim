@@ -35,16 +35,10 @@
       <button type="submit"
               class="btn btn-primary">Submit</button>
     </form>
+    {% include "trade_confirmation.html" %}
   </div>
-  <div id="enter-trade-output"
-       class="container mt-5 d-none">
-    <p id="trade-response"
-       class="font-weight-bold"></p>
-    <p>
-      To return to portfolio summary, <a href="/users/{{ g.user.id }}">click here</a>
-    </p>
-  </div>
+  <div id="other-error"
+       class="container mt-5 d-none text-danger"></div>
 {% endblock content %}
 
 <!--JS-->
-

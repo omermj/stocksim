@@ -15,7 +15,7 @@ async function handleNewTradeSubmission(e) {
   $("#enter-trade-output").addClass("d-none");
 
   // Make POST request to enter new trade
-  const response = await axios.post("/trades/", {
+  const response = await axios.post("/trades/new", {
     symbol: $("#symbol").val(),
     type: $("input[name='type']:checked").val(),
     qty: parseInt($("#qty").val()),
@@ -32,21 +32,20 @@ async function handleNewTradeSubmission(e) {
       $("#qty-error").removeClass("d-none");
     }
     if (response.data.error.type === "others") {
-      $("#trade-response").text(response.data.error.message);
-      $("#trade-response").addClass("text-danger");
-      $("#enter-trade-output").removeClass("d-none");
+      $("#other-error").text(response.data.error.message);
+      $("#other-error").removeClass("d-none");
     }
   }
 
   // Else, show the trade entry results
   else {
     const trade = response.data;
+    const tradeType = trade.type === "buy" ? "Bought" : "Sold";
     $("#trade-response").text(
-      `The trade is successfully placed. Bought ${trade.qty} shares of
+      `The trade is successfully placed. ${tradeType} ${trade.qty} shares of
       ${trade.symbol} at $${trade.entry_price} (Ticket# ${trade.trade_id})`
     );
-    $("#trade-response").addClass("text-success");
-    $("#enter-trade-output").removeClass("d-none");
+    $("#confirmationModal").modal("show");
 
     // reset form
     $("#new-trade-form").trigger("reset");

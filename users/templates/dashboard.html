@@ -5,10 +5,10 @@
 {% endblock title %}
 
 {% block content %}
-  <div class="container-fluid mt-4">
+  <div class="container mt-4">
+    <!--Cards-->
     <div class="card-deck mb-3 justify-content-center "
          id="account-balance-container">
-      <!--Cards-->
       <div class="card border-light mb-3"
            style="max-width: 18rem">
         <div class="card-header text-center text-light font-weight-bold bg-primary">ACCOUNT BALANCE</div>
@@ -32,7 +32,7 @@
         <div class="card-header text-center text-light font-weight-bold bg-primary">BUYING POWER</div>
         <div class="card-body">
           <h3 class="card-title text-center"
-              id="buying-power">{{ "${:,.2f}".format(user.get_margin_available()) }}</h3>
+              id="buying-power">{{ "${:,.2f}".format(user.get_buying_power()) }}</h3>
         </div>
       </div>
       <div class="card border-light mb-3"
@@ -88,7 +88,7 @@
               <tr>
                 <td>{{ trade.id }}</td>
                 <td>{{ trade.get_date("entry") }}</td>
-                <td class="text-center">{{ trade.symbol.upper() }}</td>
+                <td class="text-center">{{ trade.stock.symbol.upper() }}</td>
                 <td class="text-center">
                   {{ trade.trade_type }}
                 </td>
@@ -118,7 +118,7 @@
       <h5>
         Closed Positions
       </h5>
-      {% if open_trades|length == 0 %}
+      {% if closed_trades|length == 0 %}
         <p class="mb-5">
           There are no closed positions.
         </p>
@@ -170,7 +170,7 @@
                   {{ trade.get_date("entry") }}
                 </td>
                 <td class="text-center">
-                  {{ trade.symbol.upper() }}
+                  {{ trade.stock.symbol.upper() }}
                 </td>
                 <td class="text-center">
                   {{ trade.trade_type }}

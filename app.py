@@ -9,8 +9,9 @@ from stocks.models import Stock, Watchlist_Stock
 from users.routes import users
 from trades.routes import trades
 from watchlists.routes import watchlists
-from auth.routes import auth, CURR_USER_KEY
+from auth.routes import auth
 
+from auth.login import CURR_USER_KEY
 
 # Create Flask App
 app = Flask(__name__)

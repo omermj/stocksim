@@ -60,6 +60,7 @@ class Trade(db.Model):
             }})
 
         # Get entry price from Alpaca API
+        symbol = symbol.upper()
         entry_price = cls.get_latest_quote(symbol)
 
         # If there is an error in retrieving price, return error message
@@ -70,7 +71,7 @@ class Trade(db.Model):
         user = User.query.get(user_id)
         if (entry_price * qty) > user.get_buying_power():
             return ({"error": {
-                "type": "others",
+                "type": "qty",
                 "message": "Sufficient buying power is not available. Please deposit more funds."
             }})
 
@@ -178,7 +179,6 @@ class Trade(db.Model):
                 quotes[symbol] = round(response[symbol].latest_trade.price, 2)
             return quotes
 
-
     def get_pnl(self):
         """Returns profit or loss of trade"""
 
@@ -188,15 +188,15 @@ class Trade(db.Model):
             return round((self.entry_price - self.latest_price) * self.qty, 2)
 
     # TODO: Check if these can be deleted
-    # def get_date(self, transaction="entry"):
-    #     """Get formatted date/time for entry exit.
+    def get_date(self, transaction="entry"):
+        """Get formatted date/time for entry exit.
 
-    #     transaction can be "entry" or "exit". """
+        transaction can be "entry" or "exit". """
 
-    #     if transaction == "entry":
-    #         return self.entry_date.strftime("%Y/%m/%d - %I:%M %p")
-    #     else:
-    #         return self.exit_date.strftime("%Y/%m/%d - %I:%M %p")
+        if transaction == "entry":
+            return self.entry_date.strftime("%Y/%m/%d - %I:%M %p")
+        else:
+            return self.exit_date.strftime("%Y/%m/%d - %I:%M %p")
 
     # @classmethod
     # def get_all_trades(status="all"):
@@ -223,13 +223,13 @@ class Trade(db.Model):
         Returns True if successful, otherwise return False"""
 
         # Get all symbols
-        symbols = [s[0] for s in Trade.query.with_entities(Trade.symbol).all()]
+        symbols = [s.stock.symbol for s in Trade.query.all()]
 
         try:
             quotes = Trade.get_multiple_quotes(symbols)
 
             for symbol in quotes:
-                Trade.query.filter((Trade.symbol == symbol) & (Trade.status == "open")).update(
+                Trade.query.filter((Trade.stock.has(symbol=symbol)) & (Trade.status == "open")).update(
                     {Trade.latest_price: quotes[symbol]}, synchronize_session=False)
             db.session.commit()
         except:
@@ -241,3 +241,12 @@ class Trade(db.Model):
         """Returns buying power used by trade"""
 
         return self.entry_price * self.qty
+
+    def to_dict(self):
+        return {"trade_id": self.id,
+                "symbol": self.stock.symbol,
+                "type": self.trade_type,
+                "qty": self.qty,
+                "entry_price": self.entry_price,
+                "user_id": self.user.id
+                }

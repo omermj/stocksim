@@ -1,6 +1,7 @@
 from flask import redirect, render_template, flash, Blueprint, url_for, request, jsonify, g
 from trades.models import db, Trade
 from trades.forms import NewTradeForm
+from auth.login import Login
 
 trades = Blueprint("trades", __name__, template_folder="templates")
 
@@ -11,15 +12,11 @@ def user_home():
 
 
 @trades.route("/new")
+@Login.require_login
 def show_new_trade_form():
     """Show New Trade form
 
     If form is submitted, validate and enter the trade."""
-
-    # Validate if user is logged in
-    if not g.user:
-        flash("You do not have permission to view this page.", "danger")
-        return redirect(url_for("auth.login"))
 
     # Show the form
     form = NewTradeForm()
@@ -30,29 +27,20 @@ def show_new_trade_form():
 ################# RESTful API Routes ###############################
 ####################################################################
 
-@trades.route("/", methods=["POST"])
+@trades.route("/new", methods=["POST"])
+@Login.require_login
 def enter_new_trade():
     """Enter new trade"""
 
-    # Get data from request
-    symbol = request.json["symbol"]
-    type = request.json["type"]
-    qty = request.json["qty"]
-    user_id = g.user.id
+    # Create the trade
+    response = Trade.enter_trade(symbol=request.json["symbol"], 
+                                 trade_type=request.json["type"],
+                                 qty=request.json["qty"],
+                                 user_id=g.user.id)
 
-    # Enter the trade
-    response = Trade.enter_trade(symbol=symbol, trade_type=type,
-                                 qty=qty, user_id=user_id)
-
-    # If reponse is not an instance of Trade (error in entering trade)
+    # If successful, return trade info as JSON. Else return error as JSON
     if isinstance(response, Trade):
-        return jsonify({"result": "successful",
-                        "trade_id": response.id,
-                        "symbol": response.symbol,
-                        "type": response.trade_type,
-                        "qty": response.qty,
-                        "entry_price": response.entry_price
-                        })
+        return jsonify(response.to_dict())
     else:
         return jsonify(response)
 
@@ -96,7 +84,7 @@ def show_open_positions():
     if not g.user:
         flash("You do not have permission to view this page.", "danger")
         return redirect(url_for("auth.login"))
-    
+
     return render_template("open_positions.html", trades=g.user.trades)
 
 
@@ -108,5 +96,5 @@ def show_trading_history():
     if not g.user:
         flash("You do not have permission to view this page.", "danger")
         return redirect(url_for("auth.login"))
-    
+
     return render_template("history.html", trades=g.user.trades)

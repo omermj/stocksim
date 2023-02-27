@@ -9,8 +9,11 @@ users = Blueprint("users", __name__, template_folder="templates")
 
 
 @users.route("/")
+@Login.require_login
 def user_home():
-    return "User route"
+    """Shows user dashboard if logged in, else show login page"""
+    
+    return redirect(url_for("users.show_user_dashboard", user_id=g.user.id))
 
 
 @users.route("/<int:user_id>")
@@ -30,7 +33,7 @@ def show_user_dashboard(user_id):
 
     # # Get 5 recent closed trades
     closed_trades = Trade.query.filter(
-        (Trade.user_id == user_id) & (Trade.status == "closed")).order_by(Trade.entry_date.desc()).limit(5)
+        (Trade.user_id == user_id) & (Trade.status == "closed")).order_by(Trade.entry_date.desc()).limit(5).all()
 
     return render_template("dashboard.html", user=user, open_trades=open_trades, closed_trades=closed_trades)
 

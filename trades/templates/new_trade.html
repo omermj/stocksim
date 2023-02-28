@@ -42,3 +42,6 @@
 {% endblock content %}
 
 <!--JS-->
+{% block scripts %}
+  <script src="{{url_for('.static', filename='new_trade.js')}}"></script>
+{% endblock scripts %}

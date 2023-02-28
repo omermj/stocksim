@@ -52,78 +52,48 @@ async function handleNewTradeSubmission(e) {
   }
 }
 
+
 //---------------------------
-// Trade Exit
+// Table Row Click Handle
 //---------------------------
 
-$("#portfolio-table").on("click", "#trade-exit-btn", handleTradeExit);
+$(".trades-table button").on("click", handleTradeRowClick);
 
-async function handleTradeExit(e) {
-  e.preventDefault();
-
-  // Get the Trade ID
+function handleTradeRowClick(e) {
   const tradeId = $(this).data().tradeId;
 
-  // Send PUT rquest to exit trade
-  const response = await axios.put(`/trades/${tradeId}`);
+  window.location = `/trades/${tradeId}`;
+}
 
-  // If successful, update portfolio and closed trades
-  if (response.data["result"] === "successful") {
-    // Update recent trades and closed posiitons table
-    $(this).parents("tr").remove();
-    addClosedTrade(response.data);
+//---------------------------
+// Trade Close Button Click
+//---------------------------
 
-    // Update account metrics
-    const userId = response.data["user_id"];
-    const userInfo = await axios.get(`/users/${userId}/info`);
-    console.log(userInfo);
-    $("#account-balance").html(parseCurrency(userInfo.data["account_balance"]));
-    $("#equity").html(parseCurrency(userInfo.data["equity"]));
-    $("#buying-power").html(parseCurrency(userInfo.data["margin_available"]));
-    $("#realized-gain").html(parseCurrency(userInfo.data["realized_gain"]));
-    $("#unrealized-gain").html(parseCurrency(userInfo.data["unrealized_gain"]));
+$("#close-trade-btn").on("click", handleTradeClose);
+
+async function handleTradeClose(e) {
+  e.preventDefault();
+
+  const tradeId = $(this).data().tradeId;
+  const response = await axios.put(`/trades/${tradeId}/close`);
+
+  // If success, reload trade page
+  $("#closeTradeModal").modal("hide");
+
+  if (response.data.result === "success") {
+    $("#alert").text("The trade is successfully closed.");
+    $("#alert").addClass("alert-success");
+  } else {
+    $("#alert").text(
+      "An error occured while closing the trade. Please try again."
+    );
+    $("#alert").addClass("alert-danger");
   }
+
+  await reloadTradeView(tradeId);
+  $("#alert").show();
 }
 
-function addClosedTrade(trade) {
-  const $tr = `<tr>
-                <td>
-                  ${trade.trade_id}
-                </td>
-                <td>
-                  ${moment(trade.exit_date)
-                    .utc()
-                    .format("YYYY/MM/DD - hh:mm A")}
-                </td>
-                <td class="text-center">
-                  ${trade.symbol}
-                </td>
-                <td class="text-center">
-                  ${trade.type}
-                </td>
-                <td class="text-center">
-                  ${trade.qty}
-                </td>
-                <td class="text-center">
-                  ${trade.entry_price}
-                </td>
-                <td class="text-center">
-                  ${trade.exit_price}
-                </td>
-                <td class="text-center">
-                  ${trade.pnl}
-                </td>
-              </tr>`;
-
-  $("#tbody-closed-trades").append($tr);
-}
-
-function parseCurrency(num) {
-  return (
-    "$" +
-    num.toLocaleString("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })
-  );
+async function reloadTradeView(tradeId) {
+  const response = await axios.get(`/trades/${tradeId}`);
 }

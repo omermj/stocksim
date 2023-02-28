@@ -92,21 +92,27 @@ class Trade(db.Model):
         else:
             return trade
 
-    def exit_trade(self):
-        """Exit trade at latest stock price.
+    def close(self):
+        """Close trade at latest stock price.
 
         Returns True if successful, else return False"""
 
         # Get the exit price from Alpaca API
-        latest_price = Trade.get_latest_quote(self.symbol)
+        latest_price = Trade.get_latest_quote(self.stock.symbol)
 
-        if not latest_price:
-            raise RuntimeError("Cannot retrieve latest stock price.")
+        if not type(latest_price) == float:
+            return False
 
-        # Change status to closed, update latest price and update exit date
+        # Change status to closed, update latest price, update exit date and 
+        # update user account balance
         self.latest_price = latest_price
         self.exit_date = datetime.utcnow()
         self.status = "closed"
+        if self.user.account_balance + self.get_pnl() <= 0:
+            self.user.account_balance = 0
+        else:
+            self.user.account_balance += self.get_pnl()
+
 
         # Commit to db
         try:

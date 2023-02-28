@@ -27,6 +27,8 @@
                 class="text-center">Exit Price</th>
             <th scope="col"
                 class="text-center">Realized P/L</th>
+            <th scope="col"
+                class="text-center">Action</th>
           </tr>
         </thead>
         <tbody id="tbody-closed-trades">
@@ -35,12 +37,16 @@
               <tr>
                 <td>{{ trade.id }}</td>
                 <td>{{ trade.get_date("entry") }}</td>
-                <td class="text-center">{{ trade.symbol.upper() }}</td>
+                <td class="text-center">{{ trade.stock.symbol.upper() }}</td>
                 <td class="text-center">{{ trade.trade_type }}</td>
                 <td class="text-center">{{ trade.qty }}</td>
                 <td class="text-center">{{ trade.entry_price }}</td>
                 <td class="text-center">{{ trade.latest_price }}</td>
-                <td class="text-center">{{ trade.get_pnl() }}</td>
+                <td class="text-center {{'text-success' if trade.get_pnl() > 0 else 'text-danger' }}">{{ trade.get_pnl() }}</td>
+                <td class="text-center">
+                  <button id="trade-exit-btn" class="btn btn-info btn-sm" data-trade-id={{ trade.id }}>View
+                  </button>
+                </td>
               </tr>
             {% endif %}
           {% endfor %}

@@ -33,7 +33,7 @@ def enter_new_trade():
     """Enter new trade"""
 
     # Create the trade
-    response = Trade.enter_trade(symbol=request.json["symbol"], 
+    response = Trade.enter_trade(symbol=request.json["symbol"],
                                  trade_type=request.json["type"],
                                  qty=request.json["qty"],
                                  user_id=g.user.id)
@@ -45,35 +45,54 @@ def enter_new_trade():
         return jsonify(response)
 
 
-@trades.route("/<int:trade_id>", methods=["PUT"])
-def exit_trade(trade_id):
-    """Exit trade by changing the trade status to close and updating the latest 
-    price and exit date"""
+@trades.route("/<int:trade_id>")
+@Login.require_login
+def show_trade_details(trade_id):
+    """Show trade details"""
 
-    # Exit trade
+    # Update latest stock prices
+    Trade.update_latest_prices()
+
+    # Get the trade
     trade = Trade.query.get(trade_id)
 
-    # Update user account balance
-    if trade.user.account_balance + trade.get_pnl() <= 0:
-        trade.user.account_balance = 0
-    else:
-        trade.user.account_balance += trade.get_pnl()
+    return render_template("trade_details.html", trade=trade)
 
-    if trade.exit_trade():
-        return jsonify({"result": "successful",
-                        "trade_id": trade.id,
-                        "symbol": trade.symbol,
-                        "type": trade.trade_type,
-                        "qty": trade.qty,
-                        "entry_price": trade.entry_price,
-                        "exit_price": trade.latest_price,
-                        "exit_date": trade.exit_date,
-                        "pnl": trade.get_pnl(),
-                        "account_balance": trade.user.account_balance,
-                        "user_id": trade.user.id
-                        })
+
+@trades.route("/<int:trade_id>/close", methods=["PUT"])
+@Login.require_login
+def exit_trade(trade_id):
+    """Close trade by changing the trade status to close and updating the latest 
+    price and exit date"""
+
+    # Get trade
+    trade = Trade.query.get(trade_id)
+
+    # Close trade
+    if trade.close():
+        # flash("Trade is successfully closed.", "success")
+        # return redirect(url_for("trades.show_trade_details", trade_id=trade.id))
+        return jsonify({"result": "success"})
     else:
-        return jsonify({"result": "unsuccessful"})
+        return jsonify({"result": "error"})
+        # flash("There was an error closing the trade. Please try again.", "danger")
+        # return redirect(url_for("trades.show_trade_details", trade_id=trade.id))
+
+    # if trade.exit_trade():
+    #     return jsonify({"result": "successful",
+    #                     "trade_id": trade.id,
+    #                     "symbol": trade.symbol,
+    #                     "type": trade.trade_type,
+    #                     "qty": trade.qty,
+    #                     "entry_price": trade.entry_price,
+    #                     "exit_price": trade.latest_price,
+    #                     "exit_date": trade.exit_date,
+    #                     "pnl": trade.get_pnl(),
+    #                     "account_balance": trade.user.account_balance,
+    #                     "user_id": trade.user.id
+    #                     })
+    # else:
+    #     return jsonify({"result": "unsuccessful"})
 
 
 @trades.route("/open")

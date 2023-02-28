@@ -9,8 +9,8 @@
     <!-- Open Positions -->
     <div class="mb-3"
          id="portfolio">
-      <h5 >Open Positions</h5>
-      <table class="table"
+      <h5 >Open Trades</h5>
+      <table class="table table-hover"
              id="portfolio-table">
         <thead>
           <tr>
@@ -32,20 +32,20 @@
                 class="text-center">Action</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody class="open-trades-table">
           {% for trade in trades %}
             {% if trade.status=="open" %}
-              <tr>
+              <tr data-trade-id={{ trade.id }}>
                 <td>{{ trade.id }}</td>
                 <td>{{ trade.get_date("entry") }}</td>
-                <td class="text-center">{{ trade.symbol.upper() }}</td>
+                <td class="text-center">{{ trade.stock.symbol.upper() }}</td>
                 <td class="text-center">{{ trade.trade_type }}</td>
                 <td class="text-center">{{ trade.qty }}</td>
                 <td class="text-center">{{ trade.entry_price }}</td>
                 <td class="text-center">{{ trade.latest_price }}</td>
-                <td class="text-center">{{ trade.get_pnl() }}</td>
+                <td class="text-center {{'text-success' if trade.get_pnl() > 0 else 'text-danger'}}">{{ trade.get_pnl() }}</td>
                 <td class="text-center">
-                  <button id="trade-exit-btn" class="btn btn-danger btn-sm" data-trade-id={{ trade.id }}>Close
+                  <button id="trade-exit-btn" class="btn btn-info btn-sm" data-trade-id={{ trade.id }}>View
                   </button>
                 </td>
               </tr>

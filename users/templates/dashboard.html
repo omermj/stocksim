@@ -13,8 +13,8 @@
            style="max-width: 18rem">
         <div class="card-header text-center text-light font-weight-bold bg-primary">ACCOUNT BALANCE</div>
         <div class="card-body">
-          <h3 class="card-title text-center"
-              id="account-balance">{{ "${:,.2f}".format(user.account_balance) }}</h3>
+          <h4 class="card-title text-center"
+              id="account-balance">{{ "${:,.2f}".format(user.account_balance) }}</h4>
           <p class="card-text text-center text-success">{{ "{:.2f}".format(user.get_account_growth_percent()*100) }}%</p>
         </div>
       </div>
@@ -22,8 +22,8 @@
            style="max-width: 18rem">
         <div class="card-header text-center text-light font-weight-bold bg-primary">EQUITY</div>
         <div class="card-body">
-          <h3 class="card-title text-center"
-              id="equity">{{ "${:,.2f}".format(user.get_equity()) }}</h3>
+          <h4 class="card-title text-center"
+              id="equity">{{ "${:,.2f}".format(user.get_equity()) }}</h4>
           <p class="card-text text-center text-success">{{ "{:.2f}".format(user.get_equity_growth_percent()*100) }}%</p>
         </div>
       </div>
@@ -31,24 +31,24 @@
            style="max-width: 18rem">
         <div class="card-header text-center text-light font-weight-bold bg-primary">BUYING POWER</div>
         <div class="card-body">
-          <h3 class="card-title text-center"
-              id="buying-power">{{ "${:,.2f}".format(user.get_buying_power()) }}</h3>
+          <h4 class="card-title text-center"
+              id="buying-power">{{ "${:,.2f}".format(user.get_buying_power()) }}</h4>
         </div>
       </div>
       <div class="card border-light mb-3"
            style="max-width: 18rem">
-        <div class="card-header text-center text-light font-weight-bold bg-primary">REALIZED GAIN/LOSS</div>
+        <div class="card-header text-center text-light font-weight-bold bg-primary">REALIZED P/L</div>
         <div class="card-body">
-          <h3 class="card-title text-center"
-              id="realized-gain">{{ "${:,.2f}".format(user.get_realized_gain()) }}</h3>
+          <h4 class="card-title text-center"
+              id="realized-gain">{{ "${:,.2f}".format(user.get_realized_gain()) }}</h4>
         </div>
       </div>
       <div class="card border-light mb-3"
            style="max-width: 18rem">
-        <div class="card-header text-center text-light font-weight-bold bg-primary">UNREALIZED GAIN/LOSS</div>
+        <div class="card-header text-center text-light font-weight-bold bg-primary">UNREALIZED P/L</div>
         <div class="card-body">
-          <h3 class="card-title text-center"
-              id="unrealized-gain">{{ "${:,.2f}".format(user.get_unrealized_gain()) }}</h3>
+          <h4 class="card-title text-center"
+              id="unrealized-gain">{{ "${:,.2f}".format(user.get_unrealized_gain()) }}</h4>
         </div>
       </div>
     </div>
@@ -61,8 +61,7 @@
       {% if open_trades|length == 0 %}
         <p class="mb-5">There are no open trades.</p>
       {% else %}
-        <table class="table"
-               id="portfolio-table">
+        <table class="table table-hover">
           <thead>
             <tr>
               <th scope="col">ID</th>
@@ -83,31 +82,31 @@
                   class="text-center">Action</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class="trades-table">
             {% for trade in open_trades %}
-              <tr>
-                <td>{{ trade.id }}</td>
-                <td>{{ trade.get_date("entry") }}</td>
-                <td class="text-center">{{ trade.stock.symbol.upper() }}</td>
-                <td class="text-center">
-                  {{ trade.trade_type }}
-                </td>
-                <td class="text-center">
-                  {{ trade.qty }}
-                </td>
-                <td class="text-center">
-                  {{ trade.entry_price }}
-                </td>
-                <td class="text-center">
-                  {{ trade.latest_price }}
-                </td>
-                <td class="text-center">
-                  {{ trade.get_pnl() }}
-                </td>
-                <td class="text-center">
-                  <button id="trade-exit-btn" class="btn btn-danger btn-sm" data-trade-id={{ trade.id }}>Close
-                  </button>
-                </td>
+              <tr data-trade-id={{ trade.id }}>
+                  <td>{{ trade.id }}</td>
+                  <td>{{ trade.get_date("entry") }}</td>
+                  <td class="text-center">{{ trade.stock.symbol.upper() }}</td>
+                  <td class="text-center">
+                    {{ trade.trade_type }}
+                  </td>
+                  <td class="text-center">
+                    {{ trade.qty }}
+                  </td>
+                  <td class="text-center">
+                    {{ trade.entry_price }}
+                  </td>
+                  <td class="text-center">
+                    {{ trade.latest_price }}
+                  </td>
+                  <td class="text-center {{'text-success' if trade.get_pnl() > 0 else 'text-danger'}}">
+                    {{ trade.get_pnl() }}
+                  </td>
+                  <td class="text-center">
+                    <button id="trade-exit-btn" class="btn btn-info btn-sm" data-trade-id={{ trade.id }}>View
+                    </button>
+                  </td>
               </tr>
             {% endfor %}
           </tbody>
@@ -119,12 +118,12 @@
         Closed Positions
       </h5>
       {% if closed_trades|length == 0 %}
-        <p class="mb-5">
+        <p class="mb-5 text-secondary">
           There are no closed positions.
         </p>
       {% else %}
         <!-- Closed Positions -->
-        <table class="table"
+        <table class="table table-hover"
                id="closed-trades-table">
           <thead>
             <tr>
@@ -158,16 +157,18 @@
                   class="text-center">
                 Realized P/L
               </th>
+              <th scope="col"
+                  class="text-center">Action</th>
             </tr>
           </thead>
-          <tbody id="tbody-closed-trades">
+          <tbody class="trades-table">
             {% for trade in closed_trades %}
               <tr>
                 <td>
                   {{ trade.id }}
                 </td>
                 <td>
-                  {{ trade.get_date("entry") }}
+                  {{ trade.get_date("exit") }}
                 </td>
                 <td class="text-center">
                   {{ trade.stock.symbol.upper() }}
@@ -184,9 +185,13 @@
                 <td class="text-center">
                   {{ trade.latest_price }}
                 </td>
-                <td class="text-center">
+                <td class="text-center {{'text-success' if trade.get_pnl() > 0 else 'text-danger'}}">
                   {{ trade.get_pnl() }}
                 </td>
+                <td class="text-center">
+                    <button id="trade-exit-btn" class="btn btn-info btn-sm" data-trade-id={{ trade.id }}>View
+                    </button>
+                  </td>
               </tr>
             {% endfor %}
           </tbody>

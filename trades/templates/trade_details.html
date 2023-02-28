@@ -85,3 +85,7 @@
     </div>
   </div>
 {% endblock content %}
+
+{% block scripts %}
+  <script src="{{url_for('.static', filename='trade_exit.js')}}"></script>
+{% endblock scripts %}

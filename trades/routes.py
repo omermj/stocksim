@@ -3,7 +3,8 @@ from trades.models import db, Trade
 from trades.forms import NewTradeForm
 from auth.login import Login
 
-trades = Blueprint("trades", __name__, template_folder="templates")
+trades = Blueprint("trades", __name__,
+                   template_folder="templates", static_folder="static")
 
 
 @trades.route("/")
@@ -43,6 +44,12 @@ def enter_new_trade():
         return jsonify(response.to_dict())
     else:
         return jsonify(response)
+    # if isinstance(response, Trade):
+    #     flash("Trade is successfully closed.", "success")
+    #     return redirect(url_for("trades.show_trade_details", trade_id=response.id))
+    # else:
+    #     flash("TAn error occured while closing the trade. Please try again.", "danger")
+    #     return redirect(url_for("trades.show_trade_details", trade_id=response.id))
 
 
 @trades.route("/<int:trade_id>")

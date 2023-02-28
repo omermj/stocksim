@@ -52,7 +52,6 @@ async function handleNewTradeSubmission(e) {
   }
 }
 
-
 //---------------------------
 // Table Row Click Handle
 //---------------------------
@@ -65,35 +64,3 @@ function handleTradeRowClick(e) {
   window.location = `/trades/${tradeId}`;
 }
 
-//---------------------------
-// Trade Close Button Click
-//---------------------------
-
-$("#close-trade-btn").on("click", handleTradeClose);
-
-async function handleTradeClose(e) {
-  e.preventDefault();
-
-  const tradeId = $(this).data().tradeId;
-  const response = await axios.put(`/trades/${tradeId}/close`);
-
-  // If success, reload trade page
-  $("#closeTradeModal").modal("hide");
-
-  if (response.data.result === "success") {
-    $("#alert").text("The trade is successfully closed.");
-    $("#alert").addClass("alert-success");
-  } else {
-    $("#alert").text(
-      "An error occured while closing the trade. Please try again."
-    );
-    $("#alert").addClass("alert-danger");
-  }
-
-  await reloadTradeView(tradeId);
-  $("#alert").show();
-}
-
-async function reloadTradeView(tradeId) {
-  const response = await axios.get(`/trades/${tradeId}`);
-}

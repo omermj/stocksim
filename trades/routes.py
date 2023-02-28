@@ -24,10 +24,6 @@ def show_new_trade_form():
     return render_template("new_trade.html", form=form)
 
 
-####################################################################
-################# RESTful API Routes ###############################
-####################################################################
-
 @trades.route("/new", methods=["POST"])
 @Login.require_login
 def enter_new_trade():
@@ -44,12 +40,6 @@ def enter_new_trade():
         return jsonify(response.to_dict())
     else:
         return jsonify(response)
-    # if isinstance(response, Trade):
-    #     flash("Trade is successfully closed.", "success")
-    #     return redirect(url_for("trades.show_trade_details", trade_id=response.id))
-    # else:
-    #     flash("TAn error occured while closing the trade. Please try again.", "danger")
-    #     return redirect(url_for("trades.show_trade_details", trade_id=response.id))
 
 
 @trades.route("/<int:trade_id>")
@@ -85,24 +75,9 @@ def exit_trade(trade_id):
         # flash("There was an error closing the trade. Please try again.", "danger")
         # return redirect(url_for("trades.show_trade_details", trade_id=trade.id))
 
-    # if trade.exit_trade():
-    #     return jsonify({"result": "successful",
-    #                     "trade_id": trade.id,
-    #                     "symbol": trade.symbol,
-    #                     "type": trade.trade_type,
-    #                     "qty": trade.qty,
-    #                     "entry_price": trade.entry_price,
-    #                     "exit_price": trade.latest_price,
-    #                     "exit_date": trade.exit_date,
-    #                     "pnl": trade.get_pnl(),
-    #                     "account_balance": trade.user.account_balance,
-    #                     "user_id": trade.user.id
-    #                     })
-    # else:
-    #     return jsonify({"result": "unsuccessful"})
-
 
 @trades.route("/open")
+@Login.require_login
 def show_open_positions():
     """Show all open positions for the logged in user"""
 
@@ -115,6 +90,7 @@ def show_open_positions():
 
 
 @trades.route("/history")
+@Login.require_login
 def show_trading_history():
     """Show all trading history for the logged in user"""
 

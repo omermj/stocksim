@@ -1,4 +1,5 @@
 from db import db
+from stocks.models import Stock
 
 
 class Watchlist(db.Model):
@@ -7,7 +8,8 @@ class Watchlist(db.Model):
     __tablename__ = "watchlists"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, nullable=False)
+    name = db.Column(db.String(20), nullable=False, unique=True)
+    description = db.Column(db.String(50), default="No description")
     user_id = db.Column(db.Integer, db.ForeignKey(
         "users.id", ondelete="CASCADE"))
 
@@ -15,12 +17,13 @@ class Watchlist(db.Model):
         "Stock", secondary="watchlists_stocks", backref="watchlists")
 
     @classmethod
-    def create(cls, name, user_id):
+    def create(cls, name, user_id, description="No description"):
         """Create a new watchlist.
 
         Returns watchlist if successful, else return False"""
 
-        watchlist = Watchlist(name=name, user_id=user_id)
+        watchlist = Watchlist(
+            name=name, description=description, user_id=user_id)
 
         try:
             db.session.add(watchlist)
@@ -53,34 +56,49 @@ class Watchlist(db.Model):
             db.session.add(self)
             db.session.commit()
         except:
-            raise RuntimeError(
-                "Cannot rename watchlist due to a runtime error.")
+            return False
 
-    def add_stock(self, stock):
+    def add_stock(self, symbol):
         """Adds stock to the Watchlist.
 
         Returns True if successful, else return False."""
 
-        self.stocks.append(stock)
+        # Get stock from symbol
+        stock = Stock.create(symbol)
 
-        try:
-            db.session.add(self)
-            db.session.commit()
-        except:
-            return False
-        else:
-            return True
+        # If stock is valid and stock does not already exists in watchlist,
+        # append stock
+        if stock != False and stock not in self.stocks:
 
-    def remove_stock(self, stock):
+            self.stocks.append(stock)
+            try:
+                db.session.add(self)
+                db.session.commit()
+            except:
+                return False
+            else:
+                return True
+
+        return False
+
+    def remove_stock(self, symbol):
         """Removes stock from the watchlist.
 
         Returns True if successful, else return False."""
 
-        try:
-            self.stocks.remove(stock)
-            db.session.add(self)
-            db.session.commit()
-        except:
-            return False
-        else:
-            return True
+        # Get stock from symbol
+        stock = Stock.create(symbol)
+
+        # If stock is valid and stock is in watchlist remove stock
+        if stock != False and stock in self.stocks:
+
+            try:
+                self.stocks.remove(stock)
+                db.session.add(self)
+                db.session.commit()
+            except:
+                return False
+            else:
+                return True
+
+        return False

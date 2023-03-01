@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Watchlists
+{% endblock title %}
+
+{% block content %}
+  <div class="container mt-4">
+    <!--Watchlist Cards-->
+    <div class="row justify-content-right">
+      {% if watchlists|length != 0 %}
+        {% for watchlist in watchlists %}
+          <div class="col-3 mx-4 my-2">
+            <div class="card"
+                 style="width: 18rem">
+              <div class="card-body">
+                <h4 class="card-title">{{ watchlist.name }}</h4>
+                <p class="card-text">{{ watchlist.description }}</p>
+                <a href="/watchlists/{{ watchlist.id }}"
+                   class="card-link">View</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p>You have not created any watchlists yet.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock content %}

@@ -1,5 +1,6 @@
 from db import db
 from stocks.models import Stock
+from trades.models import Trade
 
 
 class Watchlist(db.Model):
@@ -102,3 +103,25 @@ class Watchlist(db.Model):
                 return True
 
         return False
+
+    def get_all_stocks(self):
+        """Returns a list of all watchlist stocks with latest prices
+
+        [{"symbol": symbol, "name": name, "price": price}]
+        """
+
+        # Get list of all symbols
+        symbols = [s.symbol for s in self.stocks]
+
+        output = []
+
+        quotes = Trade.get_multiple_quotes(symbols)
+        try:
+            for symbol in quotes:
+                name = Stock.query.filter(Stock.symbol == "MSFT").first().name
+                output.append({"symbol": symbol, "name": name,
+                               "price": quotes[symbol]})
+        except:
+            return False
+        else:
+            return output

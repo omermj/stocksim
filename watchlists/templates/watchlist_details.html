@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Watchlist: {{ watchlist.name }}
+{% endblock title %}
+
+{% block content %}
+  <div class="container mt-4">
+    <!--Watchlist Cards-->
+    <div class="row justify-content-right">
+      <p class="display-4">{{ watchlist.name }}</p>
+    </div>
+    <!--Add stock-->
+    <div>
+      <form class="form-inline mb-3" action="">
+        <input type="text" placeholder="Symbol" class="form-control mr-3">
+        <button class="btn btn-primary px-4">Add</button>
+      </form>
+    </div>
+    {% if stocks|length == 0 %}
+      <p class="mb-5">There are no stocks in the watchlist.</p>
+    {% else %}
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col"
+                class="text-center">Symbol</th>
+            <th scope="col"
+                class="text-center">Name</th>
+            <th scope="col"
+                class="text-center">Latest Price</th>
+            <th scope="col"
+                class="text-center">Trade</th>
+            <th scope="col"
+                class="text-center">Remove</th>
+          </tr>
+        </thead>
+        <tbody class="watchlist-table">
+          {% for stock in stocks %}
+            <tr data-stock-id={{ stock.id }}>
+              <td class="text-center">{{ stock["symbol"] }}</td>
+              <td class="text-center">{{ stock["name"] }}</td>
+              <td class="text-center">{{ stock["price"] }}</td>
+              <td class="text-center">
+                <button class="btn btn-primary btn-sm">Trade</button>
+              </td>
+              <td class="text-center">
+                <button class="btn btn-danger btn-sm">Remove</button>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
+{% endblock content %}

@@ -18,10 +18,12 @@ class Watchlist(db.Model):
         "Stock", secondary="watchlists_stocks", backref="watchlists")
 
     @classmethod
-    def create(cls, name, user_id, description="No description"):
+    def create(cls, name, description, user_id):
         """Create a new watchlist.
 
         Returns watchlist if successful, else return False"""
+        if description == "":
+            description = "No description"
 
         watchlist = Watchlist(
             name=name, description=description, user_id=user_id)

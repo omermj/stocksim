@@ -27,7 +27,11 @@
       {% endif %}
     </div>
     <div class="row justify-content-right mt-4 ml-4">
-      <button class="btn btn-primary">Create Watchlist</button>
+      <button class="btn btn-primary"
+              data-toggle="modal"
+              data-target="#createWatchlistModal">Create Watchlist</button>
     </div>
+    <!--Create Watchlist Modal-->
+    {% include "create_watchlist_modal.html" %}
   </div>
 {% endblock content %}

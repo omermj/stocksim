@@ -1,0 +1,42 @@
+<!-- Create Watchlist Modal -->
+<div class="modal fade"
+     id="createWatchlistModal"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="createWatchlistModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog"
+       role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"
+            id="createWatchlistModalLabel">Create Watchlist</h5>
+        <button type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="POST">
+        <div class="modal-body text-left">
+          {{ form.hidden_tag() }}
+          {% for field in form if field.widget.input_type != "hidden" %}
+            <div class="form-group">
+              {{ field.label }}
+              {{ field(placeholder=field.label.text, class="form-control form-control-lg") }}
+              {% for err in field.errors %}<small class="text-danger">{{ err }}</small>{% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+        <div class="modal-footer">
+          <button type="button"
+                  class="btn btn-secondary"
+                  data-dismiss="modal">Cancel</button>
+          <button type="submit"
+                  class="btn btn-primary">Create</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

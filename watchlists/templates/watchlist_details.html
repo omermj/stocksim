@@ -6,15 +6,18 @@
 
 {% block content %}
   <div class="container mt-4">
-    <!--Watchlist Cards-->
+    <!--Watchlist Header and Buttons-->
     <div class="row mb-3">
       <div class="col-6">
         <p class="display-4 mb-1">{{ watchlist.name }}</p>
         <p class="text-secondary ml-1">{{ watchlist.description }}</p>
       </div>
       <div class="col-6 align-self-center text-right">
-        <button class="btn btn-danger mr-2">Delete</button>
+        <button class="btn btn-danger mr-2"
+                data-toggle="modal"
+                data-target="#deleteWatchlist">Delete</button>
         <button class="btn btn-info">Edit</button>
+        {% include "delete_confirmation.html" %}
       </div>
     </div>
     <!--Add stock-->
@@ -27,6 +30,7 @@
         <button class="btn btn-primary px-4">Add</button>
       </form>
     </div>
+    <!--Watchlist Stock Table-->
     {% if not stocks %}
       <p class="mb-5">There are no stocks in the watchlist.</p>
     {% else %}
@@ -64,3 +68,8 @@
     {% endif %}
   </div>
 {% endblock content %}
+
+{% block scripts %}
+  <script src="{{url_for('.static', filename='delete_watchlist.js')}}"
+          type="module"></script>
+{% endblock scripts %}

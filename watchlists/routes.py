@@ -1,10 +1,11 @@
-from flask import redirect, render_template, flash, Blueprint, url_for, g, request
+from flask import redirect, render_template, flash, Blueprint, url_for, g, request, jsonify
 from watchlists.models import db, Watchlist
 from watchlists.forms import CreateWatchlistForm
 from auth.login import Login
 
 
-watchlists = Blueprint("watchlists", __name__, template_folder="templates")
+watchlists = Blueprint("watchlists", __name__,
+                       template_folder="templates", static_folder="static")
 
 
 @watchlists.route("/", methods=["GET", "POST"])
@@ -12,10 +13,10 @@ watchlists = Blueprint("watchlists", __name__, template_folder="templates")
 def watchlist_home():
     """Show all watchlists"""
 
+    # Get create watchlist form
     form = CreateWatchlistForm()
 
-
-
+    # If form is submitted, add watchlist
     if form.validate_on_submit():
         watchlist = Watchlist.create(name=form.name.data,
                                      description=form.description.data,
@@ -42,11 +43,14 @@ def show_watchlist(watchlist_id):
                            watchlist=watchlist, stocks=watchlist.get_all_stocks())
 
 
-@watchlists.route("/", methods=["POST"])
+@watchlists.route("/<int:watchlist_id>", methods=["DELETE"])
 @Login.require_login
-def create_watchlist():
-    """Create a new watchlist"""
+def remove_watchlist(watchlist_id):
+    """Remove watchlist"""
 
-    symbol = request.form
-    print(symbol)
-    return redirect("/")
+    watchlist = Watchlist.query.get(watchlist_id)
+
+    if Watchlist.remove(watchlist):
+        return jsonify({"result": "success"})
+    else:
+        return jsonify({"result": "error"})

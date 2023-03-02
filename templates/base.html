@@ -96,10 +96,12 @@
     </nav>
     <!-- Flash Messages -->
     <div class="container mt-2">
+      {% include "alert.html" %}
       {% for category, message in get_flashed_messages(with_categories=True) %}
-        <div role="alert"
+        <div id="alert"
+             role="alert"
              class="alert alert-{{ category }} alert-dismissible fade show">
-          {{ message }}
+          <span id="alert-msg">{{ message }}</span>
           <button type="button"
                   class="close"
                   data-dismiss="alert"

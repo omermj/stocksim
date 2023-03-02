@@ -35,3 +35,8 @@
     {% include "create_watchlist_modal.html" %}
   </div>
 {% endblock content %}
+
+{% block scripts %}
+  <script src="{{url_for('.static', filename='delete_watchlist.js')}}"
+          type="module"></script>
+{% endblock scripts %}

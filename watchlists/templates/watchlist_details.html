@@ -25,35 +25,42 @@
     <!--Edit Watchlist Modal-->
     {% include "create_watchlist_modal.html" %}
     <!--Add stock-->
-    <div>
-      <form class="form-inline mb-3"
-            action="">
-        <input type="text"
-               placeholder="Symbol"
-               class="form-control mr-3">
-        <button class="btn btn-primary px-4">Add</button>
-      </form>
+    <div class="mb-3">
+      <div>
+        <form class="form-inline"
+              action="">
+          <input type="text" data-watchlist-id={{ watchlist.id }} placeholder="Symbol" class="form-control mr-3" id="stock-input" maxlength="10">
+          <button class="btn btn-primary px-4"
+                  id="add-stock-btn">Add</button>
+        </form>
+      </div>
+      <small id="stock-error"
+             class="text-danger mt-0 ml-1"
+             style="display:none">Error adding stock</small>
     </div>
     <!--Watchlist Stock Table-->
     {% if not stocks %}
-      <p class="mb-5">There are no stocks in the watchlist.</p>
-    {% else %}
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th scope="col"
-                class="text-center">Symbol</th>
-            <th scope="col"
-                class="text-center">Name</th>
-            <th scope="col"
-                class="text-center">Latest Price</th>
-            <th scope="col"
-                class="text-center">Trade</th>
-            <th scope="col"
-                class="text-center">Remove</th>
-          </tr>
-        </thead>
-        <tbody class="watchlist-table">
+      <p id="no-stock-text" class="mb-5">There are no stocks in the watchlist.</p>
+      {% set table_show = "display: none" %}
+    {% endif %}
+    <table id="stocks-table"
+           class="table table-hover" style={{ table_show }}>
+      <thead>
+        <tr>
+          <th scope="col"
+              class="text-center">Symbol</th>
+          <th scope="col"
+              class="text-center">Name</th>
+          <th scope="col"
+              class="text-center">Latest Price</th>
+          <th scope="col"
+              class="text-center">Trade</th>
+          <th scope="col"
+              class="text-center">Remove</th>
+        </tr>
+      </thead>
+      <tbody class="watchlist-table">
+        {% if stocks %}
           {% for stock in stocks %}
             <tr data-stock-id={{ stock.id }}>
               <td class="text-center">{{ stock["symbol"] }}</td>
@@ -67,13 +74,15 @@
               </td>
             </tr>
           {% endfor %}
-        </tbody>
-      </table>
-    {% endif %}
+        {% endif %}
+      </tbody>
+    </table>
   </div>
 {% endblock content %}
 
 {% block scripts %}
   <script src="{{url_for('.static', filename='delete_watchlist.js')}}"
+          type="module"></script>
+  <script src="{{url_for('.static', filename='add_stock.js')}}"
           type="module"></script>
 {% endblock scripts %}

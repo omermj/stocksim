@@ -34,7 +34,7 @@ def watchlist_home():
 @watchlists.route("/<int:watchlist_id>", methods=["GET", "POST"])
 @Login.require_login
 def show_watchlist(watchlist_id):
-    """Show details page for watchlist"""
+    """Show details page for watchlist and edit watchlist if edit request is submitted"""
 
     # Get the watchlist and watchlist form for editing
     watchlist = Watchlist.query.get(watchlist_id)
@@ -60,7 +60,7 @@ def show_watchlist(watchlist_id):
 @watchlists.route("/<int:watchlist_id>", methods=["DELETE"])
 @Login.require_login
 def remove_watchlist(watchlist_id):
-    """Remove watchlist"""
+    """Remove watchlist."""
 
     watchlist = Watchlist.query.get(watchlist_id)
 
@@ -70,9 +70,16 @@ def remove_watchlist(watchlist_id):
         return jsonify({"result": "error"})
 
 
-# @watchlists.route("/<int:watchlist_id>", methods=["PUT"])
-# @Login.require_login
-# def edit_watchlist(watchlist_id):
-#     """Edit watchlist"""
+@watchlists.route("/<int:watchlist_id>/addstock", methods=["POST"])
+@Login.require_login
+def add_stock_to_watchlist(watchlist_id):
+    """Add stock to watchlist ID"""
 
-#     watchlist = Watchlist.query.get(watchlist_id)
+    # Get stock symbol and watchlist
+    watchlist = Watchlist.query.get(watchlist_id)
+    symbol = request.json["symbol"]
+
+    # Add stock symbol to watchlist and return results
+    response = watchlist.add_stock(symbol=symbol)
+
+    return jsonify(response)

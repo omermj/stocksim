@@ -70,26 +70,37 @@ class Watchlist(db.Model):
     def add_stock(self, symbol):
         """Adds stock to the Watchlist.
 
-        Returns True if successful, else return False."""
+        Returns stock if successful, else return error."""
 
         # Get stock from symbol
-        stock = Stock.create(symbol)
+        stock = Stock.create(symbol.upper())
 
-        # If stock is valid and stock does not already exists in watchlist,
-        # append stock
-        if stock != False and stock not in self.stocks:
+        # If stock symbol is invalid, return error
+        if stock == False:
+            return {"error": "Invalid symbol."}
 
+        # If stock is already in watchlist return error
+        if stock in self.stocks:
+            return {"error": "Stock already exists in watchlist."}
+
+        # Append stock
+        try:
             self.stocks.append(stock)
-            try:
-                db.session.add(self)
-                db.session.commit()
-            except:
-                db.session.rollback()
-                return False
-            else:
-                return True
-
-        return False
+            db.session.add(self)
+            db.session.commit()
+        except:
+            db.session.rollback()
+            return {"error":
+                    "An error occured while adding stock to the watchlist. Please try again."}
+        else:
+            return {"success": "Stock symbol is added to watchlist.",
+                    "stock": {
+                        "id:": stock.id,
+                        "symbol": stock.symbol,
+                        "name": stock.name,
+                        "price": stock.get_price(),
+                        "watchlist_id": self.id
+                    }}
 
     def remove_stock(self, symbol):
         """Removes stock from the watchlist.
@@ -128,7 +139,7 @@ class Watchlist(db.Model):
         quotes = Trade.get_multiple_quotes(symbols)
         try:
             for symbol in quotes:
-                name = Stock.query.filter(Stock.symbol == "MSFT").first().name
+                name = Stock.query.filter(Stock.symbol == symbol).first().name
                 output.append({"symbol": symbol, "name": name,
                                "price": quotes[symbol]})
         except:

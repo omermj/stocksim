@@ -10,7 +10,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title"
-            id="createWatchlistModalLabel">Create Watchlist</h5>
+            id="createWatchlistModalLabel">{{ 'Edit Watchlist' if watchlist else "Create Watchlist" }}</h5>
         <button type="button"
                 class="close"
                 data-dismiss="modal"
@@ -24,7 +24,7 @@
           {% for field in form if field.widget.input_type != "hidden" %}
             <div class="form-group">
               {{ field.label }}
-              {{ field(placeholder=field.label.text, class="form-control form-control-lg") }}
+              {{ field(class="form-control form-control-lg") }}
               {% for err in field.errors %}<small class="text-danger">{{ err }}</small>{% endfor %}
             </div>
           {% endfor %}
@@ -34,7 +34,7 @@
                   class="btn btn-secondary"
                   data-dismiss="modal">Cancel</button>
           <button type="submit"
-                  class="btn btn-primary">Create</button>
+                  class="btn btn-primary">{{ 'Edit' if watchlist else "Create" }}</button>
         </form>
       </div>
     </div>

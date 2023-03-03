@@ -31,16 +31,30 @@ def watchlist_home():
                            form=form)
 
 
-@watchlists.route("/<int:watchlist_id>")
+@watchlists.route("/<int:watchlist_id>", methods=["GET", "POST"])
 @Login.require_login
 def show_watchlist(watchlist_id):
     """Show details page for watchlist"""
 
-    # Get the watchlist
+    # Get the watchlist and watchlist form for editing
     watchlist = Watchlist.query.get(watchlist_id)
+    form = CreateWatchlistForm(obj=watchlist)
+
+    # If edit watchlist form is submitted, update watchlist in db
+    if form.validate_on_submit():
+        response = watchlist.edit(new_name=form.name.data,
+                                  new_description=form.description.data)
+        if response:
+            flash("Watchlist has been successfully edited.", "success")
+
+        else:
+            flash("There was an error editing the watchlist. Please try again.",
+                  "danger")
 
     return render_template("watchlist_details.html",
-                           watchlist=watchlist, stocks=watchlist.get_all_stocks())
+                           watchlist=watchlist,
+                           stocks=watchlist.get_all_stocks(),
+                           form=form)
 
 
 @watchlists.route("/<int:watchlist_id>", methods=["DELETE"])
@@ -54,3 +68,11 @@ def remove_watchlist(watchlist_id):
         return jsonify({"result": "success"})
     else:
         return jsonify({"result": "error"})
+
+
+# @watchlists.route("/<int:watchlist_id>", methods=["PUT"])
+# @Login.require_login
+# def edit_watchlist(watchlist_id):
+#     """Edit watchlist"""
+
+#     watchlist = Watchlist.query.get(watchlist_id)

@@ -32,6 +32,7 @@ class Watchlist(db.Model):
             db.session.add(watchlist)
             db.session.commit()
         except:
+            db.session.rollback()
             return False
         else:
             return watchlist
@@ -46,20 +47,25 @@ class Watchlist(db.Model):
             db.session.delete(watchlist)
             db.session.commit()
         except:
+            db.session.rollback()
             return False
         else:
             return True
 
-    def rename(self, new_name):
+    def edit(self, new_name, new_description):
         """Rename watchlist"""
 
         self.name = new_name
+        self.description = new_description
 
         try:
             db.session.add(self)
             db.session.commit()
         except:
+            db.session.rollback()
             return False
+        else:
+            return True
 
     def add_stock(self, symbol):
         """Adds stock to the Watchlist.
@@ -78,6 +84,7 @@ class Watchlist(db.Model):
                 db.session.add(self)
                 db.session.commit()
             except:
+                db.session.rollback()
                 return False
             else:
                 return True
@@ -100,6 +107,7 @@ class Watchlist(db.Model):
                 db.session.add(self)
                 db.session.commit()
             except:
+                db.session.rollback()
                 return False
             else:
                 return True

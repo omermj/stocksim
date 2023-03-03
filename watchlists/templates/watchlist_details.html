@@ -13,13 +13,17 @@
         <p class="text-secondary ml-1">{{ watchlist.description }}</p>
       </div>
       <div class="col-6 align-self-center text-right">
-        <button class="btn btn-danger mr-2"
+        <button class="btn btn-info btn-sm mr-2 px-3"
+                data-toggle="modal"
+                data-target="#createWatchlistModal">Edit</button>
+        <button class="btn btn-danger btn-sm"
                 data-toggle="modal"
                 data-target="#deleteWatchlist">Delete</button>
-        <button class="btn btn-info">Edit</button>
         {% include "delete_confirmation.html" %}
       </div>
     </div>
+    <!--Edit Watchlist Modal-->
+    {% include "create_watchlist_modal.html" %}
     <!--Add stock-->
     <div>
       <form class="form-inline mb-3"

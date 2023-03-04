@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, session, g
+from flask import Flask, redirect, render_template, session, g, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from config import Config
 from db import db, connect_db
@@ -47,6 +47,10 @@ def add_user_to_g():
 @app.route("/")
 def show_homepage():
     """Homepage: redirect to /playlists."""
+
+    # If user is logged in, show dashboard, else show homepage
+    if g.user:
+        return redirect(url_for("users.show_user_dashboard", user_id=g.user.id))
 
     return render_template("homepage.html")
 

@@ -41,10 +41,10 @@
     <!--Watchlist Stock Table-->
     {% if not stocks %}
       <p id="no-stock-text" class="mb-5">There are no stocks in the watchlist.</p>
-      {% set table_show = "display: none" %}
+      {% set table_show = "display: none;" %}
     {% endif %}
     <table id="stocks-table"
-           class="table table-hover" style={{ table_show }}>
+           class="table table-hover" style="{{ table_show }}">
       <thead>
         <tr>
           <th scope="col"

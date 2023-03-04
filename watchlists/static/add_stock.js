@@ -35,7 +35,7 @@ async function handleAddStock(e) {
   }
 }
 
-/**Add stock to watchlist stocks table */
+/** Add stock to watchlist stocks table */
 function addStockToTable(stock) {
   const $stock = $(
     `<tr data-stock-id=${stock.id} data-watchlist-id=${stock.watchlist_id}>

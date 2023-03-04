@@ -32,5 +32,11 @@ async function handleRemoveStock(e) {
   } else {
     // Else remove stock from watchlist
     $(this).parents("tr").remove();
+
+    // If no other items in watchlist, hide table and show No stocks label
+    if ($(".watchlist-table tr").length === 0) {
+      $("#stocks-table").hide();
+      $("#no-stock-text").show();
+    }
   }
 }

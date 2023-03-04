@@ -95,7 +95,7 @@ class Watchlist(db.Model):
         else:
             return {"success": "Stock symbol is added to watchlist.",
                     "stock": {
-                        "id:": stock.id,
+                        "id": stock.id,
                         "symbol": stock.symbol,
                         "name": stock.name,
                         "price": stock.get_price(),
@@ -139,9 +139,9 @@ class Watchlist(db.Model):
         quotes = Trade.get_multiple_quotes(symbols)
         try:
             for symbol in quotes:
-                name = Stock.query.filter(Stock.symbol == symbol).first().name
-                output.append({"symbol": symbol, "name": name,
-                               "price": quotes[symbol]})
+                stock = Stock.query.filter(Stock.symbol == symbol).first()
+                output.append({"symbol": symbol, "name": stock.name,
+                               "price": quotes[symbol], "id": stock.id})
         except:
             return False
         else:

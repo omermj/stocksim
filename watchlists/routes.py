@@ -1,5 +1,6 @@
 from flask import redirect, render_template, flash, Blueprint, url_for, g, request, jsonify
-from watchlists.models import db, Watchlist
+from watchlists.models import Watchlist
+from stocks.models import Stock
 from watchlists.forms import CreateWatchlistForm
 from auth.login import Login
 
@@ -83,3 +84,21 @@ def add_stock_to_watchlist(watchlist_id):
     response = watchlist.add_stock(symbol=symbol)
 
     return jsonify(response)
+
+
+@watchlists.route("/<int:watchlist_id>/removestock/<int:stock_id>", methods=["DELETE"])
+@Login.require_login
+def remove_stock_from_watchlist(watchlist_id, stock_id):
+    """Remove stock from watchlist ID"""
+
+    # Get stock symbol and watchlist
+    watchlist = Watchlist.query.get(watchlist_id)
+    stock = Stock.query.get(stock_id)
+
+    # Add stock symbol to watchlist and return results
+    response = watchlist.remove_stock(symbol=stock.symbol)
+
+    if response:
+        return jsonify({"result": "success"})
+    else:
+        return jsonify({"result": "unsuccessful"})

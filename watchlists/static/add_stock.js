@@ -19,9 +19,8 @@ async function handleAddStock(e) {
   const response = await axios.post(`/watchlists/${watchlistId}/addstock`, {
     symbol: stockSymbol,
   });
-  console.log(response);
 
-  // If error, display the msg else add symbol to the table
+  // If error, display the msg. Else add symbol to the table
   if (response.data.error) {
     $("#stock-error").text(response.data.error);
     $("#stock-error").show();
@@ -29,28 +28,27 @@ async function handleAddStock(e) {
   } else {
     const stock = response.data.stock;
     addStockToTable(stock);
-    $("#no-stock-text").hide();
-    $("#stocks-table").show();
-    $("#stock-error").hide();
-    $("#stock-input").val("");
-
-
+    $("#no-stock-text").hide(); // Hide no stock msg
+    $("#stocks-table").show(); // Show stocks table if hidden
+    $("#stock-error").hide(); // Hide previous symbol errors
+    $("#stock-input").val(""); // Set Add Symbol input to blank
   }
 }
 
+/**Add stock to watchlist stocks table */
 function addStockToTable(stock) {
   const $stock = $(
-    `<tr data-stock-id="${stock.id}">
-                    <td class="text-center">${stock.symbol}</td>
-                    <td class="text-center">${stock.name}</td>
-                    <td class="text-center">${stock.price}</td>
-                    <td class="text-center">
-                      <button class="btn btn-primary btn-sm">Trade</button>
-                    </td>
-                    <td class="text-center">
-                      <button class="btn btn-danger btn-sm">Remove</button>
-                    </td>
-                  </tr>`
+    `<tr data-stock-id=${stock.id} data-watchlist-id=${stock.watchlist_id}>
+      <td class="text-center">${stock.symbol}</td>
+      <td class="text-center">${stock.name}</td>
+      <td class="text-center">${stock.price}</td>
+      <td class="text-center">
+        <button class="btn btn-primary btn-sm">Trade</button>
+      </td>
+      <td class="text-center">
+        <button class="btn btn-danger btn-sm btn-sm remove-stock-btn">Remove</button>
+      </td>
+    </tr>`
   );
   $(".watchlist-table").append($stock);
 }

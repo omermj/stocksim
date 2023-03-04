@@ -1,0 +1,36 @@
+import {
+  putAlertInCookie,
+  showAlertFromCookie,
+  hideAlert,
+  showAlert,
+} from "/static/js/alert.js";
+
+$(".watchlist-table").on("click", ".remove-stock-btn", handleRemoveStock);
+
+async function handleRemoveStock(e) {
+  e.preventDefault();
+
+  // Hide alerts and errors
+  $("#stock-error").hide();
+  hideAlert();
+
+  // Get watchlist and stock id
+  const watchlistId = $(this).parents("tr").data().watchlistId;
+  const stockId = $(this).parents("tr").data().stockId;
+
+  // Make a DELETE request
+  const response = await axios.delete(
+    `/watchlists/${watchlistId}/removestock/${stockId}`
+  );
+
+  // If error, display results
+  if (response.data.error) {
+    showAlert(
+      "Error removing stock from watchlist. Please refresh the page and try again.",
+      "danger"
+    );
+  } else {
+    // Else remove stock from watchlist
+    $(this).parents("tr").remove();
+  }
+}

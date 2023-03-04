@@ -43,7 +43,7 @@ function addStockToTable(stock) {
       <td class="text-center">${stock.name}</td>
       <td class="text-center">${stock.price}</td>
       <td class="text-center">
-        <button class="btn btn-primary btn-sm">Trade</button>
+        <button class="btn btn-primary btn-sm trade-btn">Trade</button>
       </td>
       <td class="text-center">
         <button class="btn btn-danger btn-sm btn-sm remove-stock-btn">Remove</button>

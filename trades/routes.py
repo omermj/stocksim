@@ -1,7 +1,8 @@
 from flask import redirect, render_template, flash, Blueprint, url_for, request, jsonify, g
-from trades.models import db, Trade
+from trades.models import Trade
 from trades.forms import NewTradeForm
 from auth.login import Login
+from stocks.models import Stock
 
 trades = Blueprint("trades", __name__,
                    template_folder="templates", static_folder="static")
@@ -19,8 +20,16 @@ def show_new_trade_form():
 
     If form is submitted, validate and enter the trade."""
 
+    # Get stock id if provided and create data dict, which will be passed to form
+    stock_id = request.args.get("stockid")
+    if stock_id:
+        symbol = Stock.query.get(stock_id).symbol
+        data = {"symbol": symbol}
+    else:
+        data = {}
+
     # Show the form
-    form = NewTradeForm()
+    form = NewTradeForm(data=data)
     return render_template("new_trade.html", form=form)
 
 

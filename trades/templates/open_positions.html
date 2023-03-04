@@ -9,32 +9,34 @@
     <!-- Open Positions -->
     <div class="mb-3"
          id="portfolio">
-      <h5 >Open Trades</h5>
-      <table class="table table-hover"
-             id="portfolio-table">
-        <thead>
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Timestamp</th>
-            <th scope="col"
-                class="text-center">Symbol</th>
-            <th scope="col"
-                class="text-center">Type</th>
-            <th scope="col"
-                class="text-center">Quantity</th>
-            <th scope="col"
-                class="text-center">Entry Price</th>
-            <th scope="col"
-                class="text-center">Current Price</th>
-            <th scope="col"
-                class="text-center">Unrealized P/L</th>
-            <th scope="col"
-                class="text-center">Action</th>
-          </tr>
-        </thead>
-        <tbody class="open-trades-table">
-          {% for trade in trades %}
-            {% if trade.status=="open" %}
+      <h5 class="mb-3">Open Trades</h5>
+      {% if trades|length == 0 %}
+        <p class="mb-5">There are no open trades.</p>
+      {% else %}
+        <table class="table table-hover"
+               id="portfolio-table">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Timestamp</th>
+              <th scope="col"
+                  class="text-center">Symbol</th>
+              <th scope="col"
+                  class="text-center">Type</th>
+              <th scope="col"
+                  class="text-center">Quantity</th>
+              <th scope="col"
+                  class="text-center">Entry Price</th>
+              <th scope="col"
+                  class="text-center">Current Price</th>
+              <th scope="col"
+                  class="text-center">Unrealized P/L</th>
+              <th scope="col"
+                  class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody class="open-trades-table">
+            {% for trade in trades %}
               <tr data-trade-id={{ trade.id }}>
                 <td>{{ trade.id }}</td>
                 <td>{{ trade.get_date("entry") }}</td>
@@ -43,16 +45,16 @@
                 <td class="text-center">{{ trade.qty }}</td>
                 <td class="text-center">{{ trade.entry_price }}</td>
                 <td class="text-center">{{ trade.latest_price }}</td>
-                <td class="text-center {{'text-success' if trade.get_pnl() > 0 else 'text-danger'}}">{{ trade.get_pnl() }}</td>
+                <td class="text-center {{'text-success' if trade.get_pnl() > 0 else 'text-danger' }}">{{ trade.get_pnl() }}</td>
                 <td class="text-center">
                   <button id="trade-exit-btn" class="btn btn-info btn-sm" data-trade-id={{ trade.id }}>View
                   </button>
                 </td>
               </tr>
-            {% endif %}
-          {% endfor %}
-        </tbody>
-      </table>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
     </div>
   </div>
 {% endblock content %}

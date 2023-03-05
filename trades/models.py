@@ -193,7 +193,7 @@ class Trade(db.Model):
         else:
             return round((self.entry_price - self.latest_price) * self.qty, 2)
 
-    # TODO: Check if these can be deleted
+    
     def get_date(self, transaction="entry"):
         """Get formatted date/time for entry exit.
 

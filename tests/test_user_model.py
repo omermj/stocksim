@@ -1,10 +1,10 @@
+from unittest import TestCase
+from db import db
+from users.models import User
 from app import app
 import os
-from users.models import User
-from db import db
-from unittest import TestCase
-
 os.environ['DATABASE_URL'] = "postgresql:///stocksim-test"
+
 
 db.create_all()
 
@@ -16,7 +16,6 @@ class UserModelTestCase(TestCase):
         """Create test client and sample data"""
         app.config['TESTING'] = True
         app.config['DEBUG_TB_HOSTS'] = ['dont-show-debug-toolbar']
-        app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql:///stocksim-test'
 
         User.query.delete()
 

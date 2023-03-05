@@ -64,7 +64,10 @@ class Watchlist(db.Model):
         """Rename watchlist"""
 
         self.name = new_name
-        self.description = new_description
+        if new_description == "":
+            self.description = "No description"
+        else:
+            self.description = new_description
 
         try:
             db.session.add(self)

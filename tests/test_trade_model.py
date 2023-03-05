@@ -1,11 +1,11 @@
+from unittest import TestCase
+from db import db
+from users.models import User
+from trades.models import Trade
 from app import app
 import os
-from trades.models import Trade
-from users.models import User
-from db import db
-from unittest import TestCase
-
 os.environ['DATABASE_URL'] = "postgresql:///stocksim-test"
+
 
 db.create_all()
 

@@ -1,6 +1,7 @@
 from db import db
 from stocks.models import Stock
 from trades.models import Trade
+from users.models import User
 
 
 class Watchlist(db.Model):
@@ -9,7 +10,7 @@ class Watchlist(db.Model):
     __tablename__ = "watchlists"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(20), nullable=False, unique=True)
+    name = db.Column(db.String(20), nullable=False)
     description = db.Column(db.String(50), default="No description")
     user_id = db.Column(db.Integer, db.ForeignKey(
         "users.id", ondelete="CASCADE"))
@@ -22,8 +23,15 @@ class Watchlist(db.Model):
         """Create a new watchlist.
 
         Returns watchlist if successful, else return False"""
+
         if description == "":
             description = "No description"
+
+        # Check if watchlist name already exists for user
+        user = User.query.get(user_id)
+        user_watchlist_names = [w.name.lower() for w in user.watchlists]
+        if name.lower() in user_watchlist_names:
+            return False
 
         watchlist = Watchlist(
             name=name, description=description, user_id=user_id)

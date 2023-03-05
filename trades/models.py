@@ -204,23 +204,6 @@ class Trade(db.Model):
         else:
             return self.exit_date.strftime("%Y/%m/%d - %I:%M %p")
 
-    # @classmethod
-    # def get_all_trades(status="all"):
-    #     """Returns list of all trades
-
-    #     Args:
-    #         status (str, optional): "open" returns all open trades
-    #         "closed" returns all closed trades. Defaults to "all".
-    #     """
-
-    #     if status == "all":
-    #         return Trade.query.all()
-    #     elif status == "open":
-    #         return Trade.query.filter(Trade.status == "open").all()
-    #     elif status == "closed":
-    #         return Trade.query.filter(Trade.status == "closed").all()
-    #     else:
-    #         return None
 
     @classmethod
     def update_latest_prices(cls):

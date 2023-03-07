@@ -1,6 +1,8 @@
 from db import db
 from flask_bcrypt import Bcrypt
 from sqlalchemy.exc import IntegrityError
+from auth.forms import UserEditForm, ChangePasswordForm
+from flask import render_template, flash, redirect, url_for
 
 bcrypt = Bcrypt()
 
@@ -71,13 +73,24 @@ class User(db.Model):
 
         return False
 
+    @classmethod
+    def change_password_route(cls, user_id):
+        user = User.query.get(user_id)
+
+        if user.change_password(form=ChangePasswordForm()):
+            flash("Password is updated.", "success")
+            return redirect(url_for("users.show_user_dashboard", user_id=user.id))
+        else:
+            flash("The current password is incorrect. Please try again.", "danger")
+            return render_template("change_password.html", form=ChangePasswordForm())
+
     def change_password(self, username, current_password, new_password):
         """Change user password
-
         Returns True if successful, else returns False"""
 
         # Authenticate user
-        if User.authenticate(username=username, password=current_password) == False:
+        if User.authenticate(username=username,
+                             password=current_password) == False:
             return False
 
         hashed_pwd = bcrypt.generate_password_hash(
@@ -95,7 +108,6 @@ class User(db.Model):
 
     def edit_profile(self, email, first_name, last_name):
         """Edits user profile
-
         Returns True if successful, else returns False"""
 
         self.email = email

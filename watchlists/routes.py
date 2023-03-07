@@ -1,61 +1,48 @@
 from flask import redirect, render_template, flash, Blueprint, url_for, g, request, jsonify
 from watchlists.models import Watchlist
 from stocks.models import Stock
-from watchlists.forms import CreateWatchlistForm
+from watchlists.forms import WatchlistForm
 from auth.login import Login
+from watchlists.views import Views
+from watchlists.operations import Operations
 
 
 watchlists = Blueprint("watchlists", __name__,
                        template_folder="templates", static_folder="static")
+views = Views()
+operations = Operations()
 
 
-@watchlists.route("/", methods=["GET", "POST"])
+@watchlists.route("/")
 @Login.require_login
 def watchlist_home():
     """Show all watchlists"""
 
-    # Get create watchlist form
-    form = CreateWatchlistForm()
-
-    # If form is submitted, add watchlist
-    if form.validate_on_submit():
-        watchlist = Watchlist.create(name=form.name.data,
-                                     description=form.description.data,
-                                     user_id=g.user.id)
-        if watchlist:
-            flash("New watchlist is successfully created.", "success")
-        else:
-            flash("Error creating watchlist.", "danger")
-        return redirect(url_for("watchlists.watchlist_home"))
-
-    return render_template("watchlists.html", watchlists=g.user.watchlists,
-                           form=form)
+    return views.show_watchlist_home()
 
 
-@watchlists.route("/<int:watchlist_id>", methods=["GET", "POST"])
+@watchlists.route("/", methods=["POST"])
+@Login.require_login
+def add_watchlist():
+    """Add new watchlist"""
+
+    return operations.add_watchlist()
+
+
+@watchlists.route("/<int:watchlist_id>")
 @Login.require_login
 def show_watchlist(watchlist_id):
-    """Show details page for watchlist and edit watchlist if edit request is submitted"""
+    """Show details page for watchlist"""
 
-    # Get the watchlist and watchlist form for editing
-    watchlist = Watchlist.query.get(watchlist_id)
-    form = CreateWatchlistForm(obj=watchlist)
+    return views.show_watchlist(watchlist_id=watchlist_id)
 
-    # If edit watchlist form is submitted, update watchlist in db
-    if form.validate_on_submit():
-        response = watchlist.edit(new_name=form.name.data,
-                                  new_description=form.description.data)
-        if response:
-            flash("Watchlist has been successfully edited.", "success")
 
-        else:
-            flash("There was an error editing the watchlist. Please try again.",
-                  "danger")
+@watchlists.route("/<int:watchlist_id>", methods=["POST"])
+@Login.require_login
+def edit_watchlist(watchlist_id):
+    """Edit watchlist"""
 
-    return render_template("watchlist_details.html",
-                           watchlist=watchlist,
-                           stocks=watchlist.get_all_stocks(),
-                           form=form)
+    return operations.edit_watchlist(watchlist_id=watchlist_id)
 
 
 @watchlists.route("/<int:watchlist_id>", methods=["DELETE"])
@@ -63,42 +50,20 @@ def show_watchlist(watchlist_id):
 def remove_watchlist(watchlist_id):
     """Remove watchlist."""
 
-    watchlist = Watchlist.query.get(watchlist_id)
-
-    if Watchlist.remove(watchlist):
-        return jsonify({"result": "success"})
-    else:
-        return jsonify({"result": "error"})
+    return operations.remove_watchlist(watchlist_id=watchlist_id)
 
 
 @watchlists.route("/<int:watchlist_id>/addstock", methods=["POST"])
 @Login.require_login
 def add_stock_to_watchlist(watchlist_id):
-    """Add stock to watchlist ID"""
+    """Add stock to watchlist"""
 
-    # Get stock symbol and watchlist
-    watchlist = Watchlist.query.get(watchlist_id)
-    symbol = request.json["symbol"]
-
-    # Add stock symbol to watchlist and return results
-    response = watchlist.add_stock(symbol=symbol)
-
-    return jsonify(response)
+    return operations.add_stock(watchlist_id=watchlist_id, request=request)
 
 
 @watchlists.route("/<int:watchlist_id>/removestock/<int:stock_id>", methods=["DELETE"])
 @Login.require_login
 def remove_stock_from_watchlist(watchlist_id, stock_id):
-    """Remove stock from watchlist ID"""
+    """Remove stock from watchlist"""
 
-    # Get stock symbol and watchlist
-    watchlist = Watchlist.query.get(watchlist_id)
-    stock = Stock.query.get(stock_id)
-
-    # Add stock symbol to watchlist and return results
-    response = watchlist.remove_stock(symbol=stock.symbol)
-
-    if response:
-        return jsonify({"result": "success"})
-    else:
-        return jsonify({"result": "unsuccessful"})
+    return operations.remove_stock(watchlist_id=watchlist_id, stock_id=stock_id)

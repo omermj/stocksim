@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% set stocks = watchlist.get_all_stocks() %}
+
 {% block title %}
   Watchlist: {{ watchlist.name }}
 {% endblock title %}

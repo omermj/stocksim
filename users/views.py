@@ -17,11 +17,9 @@ class Views(object):
         form = UserEditForm(obj=user)
 
         if form.validate_on_submit():
-
             response = user.edit_profile(email=form.email.data,
                                         first_name=form.first_name.data,
                                         last_name=form.last_name.data)
-
             if response:
                 flash("User profile is updated.", "success")
                 return redirect(url_for("users.show_user_dashboard", user_id=user.id))

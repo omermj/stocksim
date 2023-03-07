@@ -12,6 +12,7 @@ from auth.login import CURR_USER_KEY
 
 # Create Flask App
 app = Flask(__name__)
+app.app_context().push()
 app.config.from_object(Config)
 
 

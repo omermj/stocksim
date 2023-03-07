@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, EmailField, RadioField, FloatField
-from wtforms.validators import DataRequired, Email, Length, EqualTo, NumberRange
+from wtforms import RadioField, FloatField
+from wtforms.validators import DataRequired, NumberRange
 
 
 class ChangeAccountSettings(FlaskForm):

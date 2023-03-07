@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, TextAreaField, RadioField, IntegerField
-from wtforms.validators import DataRequired, Email, Length
+from wtforms import StringField
+from wtforms.validators import DataRequired, Length
 
 
 class WatchlistForm(FlaskForm):

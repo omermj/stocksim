@@ -1,8 +1,6 @@
-from flask import redirect, render_template, flash, Blueprint, url_for, g, request, jsonify
+from flask import render_template, g
 from watchlists.models import Watchlist
-from stocks.models import Stock
 from watchlists.forms import WatchlistForm
-from auth.login import Login
 
 
 class Views(object):
@@ -16,8 +14,6 @@ class Views(object):
         return render_template("watchlists.html", watchlists=g.user.watchlists,
                                form=form)
 
-    
-
     @classmethod
     def show_watchlist(cls, watchlist_id):
         """Show watchlist with stocks"""
@@ -27,5 +23,3 @@ class Views(object):
 
         return render_template("watchlist_details.html",
                                watchlist=watchlist, form=form)
-    
-    

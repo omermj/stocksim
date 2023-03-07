@@ -1,7 +1,7 @@
 from db import db
 from flask_bcrypt import Bcrypt
 from sqlalchemy.exc import IntegrityError
-from auth.forms import UserEditForm, ChangePasswordForm
+from auth.forms import ChangePasswordForm
 from flask import render_template, flash, redirect, url_for
 
 bcrypt = Bcrypt()

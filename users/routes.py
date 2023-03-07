@@ -1,8 +1,4 @@
-from flask import redirect, render_template, flash, Blueprint, url_for, g, jsonify, request
-from users.models import User
-from trades.models import Trade
-from auth.forms import UserEditForm, ChangePasswordForm
-from users.forms import ChangeAccountSettings
+from flask import redirect, render_template, Blueprint, url_for, g
 from auth.login import Login
 from users.dashboard import Dashboard
 from users.views import Views

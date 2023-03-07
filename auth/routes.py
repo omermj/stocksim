@@ -1,8 +1,5 @@
-from flask import render_template, flash, redirect, g, url_for, Blueprint
-from sqlalchemy.exc import IntegrityError
-from users.models import User
-from auth.forms import SignupForm, UserLoginForm
-from auth.login import Login, CURR_USER_KEY
+from flask import Blueprint
+from auth.login import Login
 from auth.operations import Operations
 
 
@@ -29,6 +26,6 @@ def login():
 @auth.route("/logout")
 @Login.require_login
 def logout():
-    """Logout user."""
+    """Logout user"""
 
     return operations.handle_logout()

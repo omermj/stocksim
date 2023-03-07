@@ -1,7 +1,4 @@
-from flask import redirect, render_template, flash, Blueprint, url_for, g, request, jsonify
-from watchlists.models import Watchlist
-from stocks.models import Stock
-from watchlists.forms import WatchlistForm
+from flask import Blueprint, request
 from auth.login import Login
 from watchlists.views import Views
 from watchlists.operations import Operations
@@ -48,7 +45,7 @@ def edit_watchlist(watchlist_id):
 @watchlists.route("/<int:watchlist_id>", methods=["DELETE"])
 @Login.require_login
 def remove_watchlist(watchlist_id):
-    """Remove watchlist."""
+    """Remove watchlist"""
 
     return operations.remove_watchlist(watchlist_id=watchlist_id)
 

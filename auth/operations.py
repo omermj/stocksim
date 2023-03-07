@@ -1,8 +1,7 @@
-from flask import render_template, flash, redirect, g, url_for, Blueprint
-from sqlalchemy.exc import IntegrityError
+from flask import render_template, flash, redirect, g, url_for
 from users.models import User
 from auth.forms import SignupForm, UserLoginForm
-from auth.login import Login, CURR_USER_KEY
+from auth.login import Login
 
 
 class Operations(object):

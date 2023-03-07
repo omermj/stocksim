@@ -3,9 +3,6 @@ from flask_debugtoolbar import DebugToolbarExtension
 from config import Config
 from db import db, connect_db
 from users.models import User
-from trades.models import Trade
-from watchlists.models import Watchlist
-from stocks.models import Stock, Watchlist_Stock
 from users.routes import users
 from trades.routes import trades
 from watchlists.routes import watchlists

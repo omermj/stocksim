@@ -1,8 +1,7 @@
-from flask import redirect, render_template, flash, Blueprint, url_for, g, request, jsonify
+from flask import redirect, render_template, flash, url_for, g, jsonify
 from watchlists.models import Watchlist
 from stocks.models import Stock
 from watchlists.forms import WatchlistForm
-from auth.login import Login
 
 
 class Operations(object):

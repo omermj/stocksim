@@ -1,7 +1,6 @@
-from flask import redirect, render_template, flash, Blueprint, url_for, request, jsonify, g
+from flask import render_template, request, g
 from trades.models import Trade
 from trades.forms import NewTradeForm
-from auth.login import Login
 from stocks.models import Stock
 
 

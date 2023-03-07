@@ -7,7 +7,7 @@ from auth.login import Login
 from db import db
 
 class Views(object):
-    """Utilities class for User"""
+    """Utilities Class for User"""
     
     @classmethod
     def show_and_edit_profile(cls, user_id):

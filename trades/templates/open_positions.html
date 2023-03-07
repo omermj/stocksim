@@ -47,8 +47,8 @@
                 <td class="text-center">{{ trade.latest_price }}</td>
                 <td class="text-center {{'text-success' if trade.get_pnl() > 0 else 'text-danger' }}">{{ trade.get_pnl() }}</td>
                 <td class="text-center">
-                  <button id="trade-exit-btn" class="btn btn-info btn-sm" data-trade-id={{ trade.id }}>View
-                  </button>
+                  <a class="btn btn-info btn-sm"
+                     href="/trades/{{ trade.id }}">View</a>
                 </td>
               </tr>
             {% endfor %}

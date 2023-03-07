@@ -14,6 +14,7 @@ from auth.login import CURR_USER_KEY
 app = Flask(__name__)
 app.config.from_object(Config)
 
+
 # Connect to database
 connect_db(app)
 db.create_all()

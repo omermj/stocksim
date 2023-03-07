@@ -1,4 +1,3 @@
 /.djlintrc
 **/__pycache__
 /venv
-/keys.py

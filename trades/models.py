@@ -6,6 +6,10 @@ from datetime import datetime
 from users.models import User
 from stocks.models import Stock
 from keys import API_KEY, SECRET_KEY
+# import os
+
+# API_KEY = os.environ.get("API_KEY")
+# SECRET_KEY = os.environ.get("API_SECRET_KEY")
 
 
 class Trade(db.Model):

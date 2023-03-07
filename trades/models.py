@@ -5,10 +5,7 @@ from alpaca.common import exceptions
 from datetime import datetime
 from users.models import User
 from stocks.models import Stock
-
-# TODO: MOVE API KEYS TO A SEPARATE FILE
-API_KEY = "PK0GRC1UBR3JTTNCPQA6"
-SECRET_KEY = "qZEepGAYXleOWXlH4B7C3vzYuDgXNrsRVa3ymNxn"
+from keys import API_KEY, SECRET_KEY
 
 
 class Trade(db.Model):
@@ -103,7 +100,7 @@ class Trade(db.Model):
         if not type(latest_price) == float:
             return False
 
-        # Change status to closed, update latest price, update exit date and 
+        # Change status to closed, update latest price, update exit date and
         # update user account balance
         self.latest_price = latest_price
         self.exit_date = datetime.utcnow()
@@ -112,7 +109,6 @@ class Trade(db.Model):
             self.user.account_balance = 0
         else:
             self.user.account_balance += self.get_pnl()
-
 
         # Commit to db
         try:
@@ -193,7 +189,6 @@ class Trade(db.Model):
         else:
             return round((self.entry_price - self.latest_price) * self.qty, 2)
 
-    
     def get_date(self, transaction="entry"):
         """Get formatted date/time for entry exit.
 
@@ -203,7 +198,6 @@ class Trade(db.Model):
             return self.entry_date.strftime("%Y/%m/%d - %I:%M %p")
         else:
             return self.exit_date.strftime("%Y/%m/%d - %I:%M %p")
-
 
     @classmethod
     def update_latest_prices(cls):

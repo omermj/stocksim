@@ -3,11 +3,7 @@ from alpaca.trading.client import TradingClient
 from alpaca.data.historical.stock import StockHistoricalDataClient
 from alpaca.data.requests import StockSnapshotRequest
 from alpaca.common import exceptions
-
-
-# TODO: Move KEYS TO SEPARATE FILE
-API_KEY = "PK0GRC1UBR3JTTNCPQA6"
-SECRET_KEY = "qZEepGAYXleOWXlH4B7C3vzYuDgXNrsRVa3ymNxn"
+from keys import API_KEY, SECRET_KEY
 
 
 class Stock(db.Model):

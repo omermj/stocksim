@@ -17,7 +17,6 @@ app.config.from_object(Config)
 
 # Connect to database
 connect_db(app)
-db.create_all()
 
 # Enable DTE
 debug = DebugToolbarExtension(app)

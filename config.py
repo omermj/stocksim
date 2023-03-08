@@ -11,5 +11,3 @@ class Config(object):
     SQLALCHEMY_ECHO = False
     SECRET_KEY = os.environ.get("SECRET_KEY", "secretkey_local")
     DEBUG_TB_INTERCEPT_REDIRECTS = False
-    API_KEY = "PK0GRC1UBR3JTTNCPQA6"
-    API_SECRET_KEY = "qZEepGAYXleOWXlH4B7C3vzYuDgXNrsRVa3ymNxn"

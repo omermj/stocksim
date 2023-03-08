@@ -4,10 +4,6 @@ from alpaca.data.historical.stock import StockHistoricalDataClient
 from alpaca.data.requests import StockSnapshotRequest
 from alpaca.common import exceptions
 from keys import API_KEY, SECRET_KEY
-# import os
-
-# API_KEY = os.environ.get("API_KEY")
-# SECRET_KEY = os.environ.get("API_SECRET_KEY")
 
 
 class Stock(db.Model):

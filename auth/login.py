@@ -21,6 +21,7 @@ class Login(object):
 
     def require_login(f):
         """Decorator function to check for Login before route"""
+        
         @wraps(f)
         def wrap(*args, **kwargs):
             if g.user:

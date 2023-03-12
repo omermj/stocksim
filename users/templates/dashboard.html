@@ -18,7 +18,11 @@
         <div class="card-body">
           <h4 class="card-title text-center"
               id="account-balance">{{ "${:,.2f}".format(user.account_balance) }}</h4>
-          <p class="card-text text-center text-success">{{ "{:.2f}".format(user.get_account_growth_percent()*100) }}%</p>
+          {% if user.get_account_growth_percent() >= 0 %}
+            <p class="card-text text-center text-success">{{ "{:.2f}".format(user.get_account_growth_percent()*100) }}%</p>
+          {% else %}
+            <p class="card-text text-center text-danger">{{ "{:.2f}".format(user.get_account_growth_percent()*100) }}%</p>
+          {% endif %}
         </div>
       </div>
       <div class="card border-light mb-3"
@@ -27,7 +31,11 @@
         <div class="card-body">
           <h4 class="card-title text-center"
               id="equity">{{ "${:,.2f}".format(user.get_equity()) }}</h4>
-          <p class="card-text text-center text-success">{{ "{:.2f}".format(user.get_equity_growth_percent()*100) }}%</p>
+          {% if user.get_equity_growth_percent() >= 0 %}
+            <p class="card-text text-center text-success">{{ "{:.2f}".format(user.get_equity_growth_percent()*100) }}%</p>
+          {% else %}
+            <p class="card-text text-center text-danger">{{ "{:.2f}".format(user.get_equity_growth_percent()*100) }}%</p>
+          {% endif %}
         </div>
       </div>
       <div class="card border-light mb-3"

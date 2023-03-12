@@ -7,6 +7,7 @@ from users.routes import users
 from trades.routes import trades
 from watchlists.routes import watchlists
 from auth.routes import auth
+from utils import add_user_to_session, homepage_view, request_header
 from auth.login import CURR_USER_KEY
 
 # Create Flask App
@@ -34,33 +35,22 @@ app.register_blueprint(auth, url_prefix="/auth")
 def add_user_to_g():
     """If logged in, add user to Flask global (g)"""
 
-    if CURR_USER_KEY in session:
-        g.user = User.query.get(session[CURR_USER_KEY])
-    else:
-        g.user = None
+    add_user_to_session()
 
 
 # Root view
 @app.route("/")
 def show_homepage():
-    """Homepage: redirect to /playlists."""
+    """Show home page view depending on user login status"""
 
-    # If user is logged in, show dashboard, else show homepage
-    if g.user:
-        return redirect(url_for("users.show_user_dashboard", user_id=g.user.id))
-
-    return render_template("homepage.html")
+    return homepage_view()
 
 
 @app.after_request
 def add_header(req):
     """Add non-caching headers on every request."""
 
-    req.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    req.headers["Pragma"] = "no-cache"
-    req.headers["Expires"] = "0"
-    req.headers['Cache-Control'] = 'public, max-age=0'
-    return req
+    return request_header(req=req)
 
 
 @app.errorhandler(404)

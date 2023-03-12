@@ -73,17 +73,6 @@ class User(db.Model):
 
         return False
 
-    @classmethod
-    def change_password_route(cls, user_id):
-        user = User.query.get(user_id)
-
-        if user.change_password(form=ChangePasswordForm()):
-            flash("Password is updated.", "success")
-            return redirect(url_for("users.show_user_dashboard", user_id=user.id))
-        else:
-            flash("The current password is incorrect. Please try again.", "danger")
-            return render_template("change_password.html", form=ChangePasswordForm())
-
     def change_password(self, username, current_password, new_password):
         """Change user password
         Returns True if successful, else returns False"""

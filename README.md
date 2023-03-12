@@ -1,6 +1,8 @@
 # StockSim
 StockSim is a web based stock trading simulator, which enables users to create virtual stock trading accounts and trade the US Equity markets with virtual money. Users can test their trading skills and strategies on live markets and keep a record of their trading performance.
 
+Live link: https://stocksim.herokuapp.com/
+
 ## Technologies Used
 - Frontend: Javascript, JQuery, AJAX, Bootstrap CSS
 - Backend: Python (Flask), SQLAlchemy, PostgreSQL, WTForms, Bcrypt, Jinja2
@@ -21,6 +23,33 @@ StockSim allows users to enter both Buy (Long) and Sell (Short) positions. In a 
 The app tracks the profitability of all user trades with latest stock prices at individual trade level as well as aggregate account level. This enables the user to quickly view the total gain and loss on the overall portfolio.
 
 The user can also create multiple stock watchlists. Each watchlist can contain multiple stocks, which the user can track and trade.
+
+
+## Installation instructions
+
+1. Create a free account on Alpaca Markets API (https://alpaca.markets/data) to get your API keys
+2. Clone the repo to your local machine
+
+        $ git clone https://github.com/codersixteen/stocksim.git
+
+3. If not already, install PostgreSQL in your development environment
+4. Create a Postgres Database (app assumes a default name of <code>stocksim-db</code>, but can be changed in <code>config.py</code> file)
+
+        $ createdb stocksim-db
+
+5. Create a virtual environment and install app dependencies in the new virtual environment:
+   
+        $ pip install -r requirements.txt
+
+6. In <code>keys.py</code> file, put your API keys from Alpaca Data API. You can also save the keys in your environment variables. App will first check for keys in environment variables and if not available, it will use the keys provided in <code>keys.py</code> file.
+   
+7. Run the <code>seed.py</code> to create tables in the database and setup a sample user
+   
+        $ python seed.py
+
+8. Run flask server:
+
+        $ flask run
 
 
 ## User Flow and Main Features

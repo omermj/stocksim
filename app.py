@@ -1,20 +1,16 @@
-from flask import Flask, redirect, render_template, session, g, url_for
+from flask import Flask, render_template
 from flask_debugtoolbar import DebugToolbarExtension
 from config import Config
-from db import db, connect_db
-from users.models import User
+from db import connect_db
 from users.routes import users
 from trades.routes import trades
 from watchlists.routes import watchlists
 from auth.routes import auth
 from utils import add_user_to_session, homepage_view, request_header
-from auth.login import CURR_USER_KEY
-from werkzeug.middleware.proxy_fix import ProxyFix
+
 
 # Create Flask App
 app = Flask(__name__)
-app.wsgi_app = ProxyFix(app.wsgi_app, x_prefix=1, x_proto=1, x_host=1)
-app.app_context().push()
 app.config.from_object(Config)
 
 

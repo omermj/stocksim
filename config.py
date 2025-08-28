@@ -5,7 +5,7 @@ class Config(object):
     """Configuration for the app"""
 
     SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_URL', "postgresql:///stocksim_db").replace("postgres://", "postgresql://", 1)
+        'DATABASE_URL', "postgresql:///stocksim-db").replace("postgres://", "postgresql://", 1)
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False

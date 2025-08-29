@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write # allow push to GHCR
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,7 +28,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata
+      - name: Extract metadata (tags, labels)
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -36,13 +36,12 @@ jobs:
           tags: |
             type=raw,value=latest
             type=ref,event=branch
-            type=semver,pattern={{version}}
 
-      - name: Build and push
+      - name: Build and push (multi-arch)
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

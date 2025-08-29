@@ -1,138 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible"
-          content="IE=edge">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/flatly/bootstrap.min.css">
-    <base href="{{ request.script_root}}/">
-    <title>
-
-      {% block title %}
-      {% endblock title %}
-
-    </title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/flatly/bootstrap.min.css"
+    />
+    <base href="{{ request.script_root}}/" />
+    <title>{% block title %} {% endblock title %}</title>
   </head>
   <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-primary bg-primary py-1">
       {% if g.user.id %}
-        <a class="navbar-brand"
-           href="/users/{{ g.user.id }}">STOCKSIM</a>
+      <a
+        class="navbar-brand"
+        href="{{ url_for('users.show_user_dashboard', user_id=g.user.id) }}"
+        >STOCKSIM</a
+      >
       {% else %}
-        <a class="navbar-brand"
-           href="/">STOCKSIM</a>
+      <a class="navbar-brand" href="{{ url_for('show_homepage') }}">STOCKSIM</a>
       {% endif %}
-      <button class="navbar-toggler"
-              type="button"
-              data-toggle="collapse"
-              data-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent"
-              aria-expanded="false"
-              aria-label="Toggle navigation">
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse"
-           id="navbarSupportedContent">
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           {% if g.user.id %}
-            <li class="nav-item active">
-              <a class="nav-link"
-                 href="/users/{{ g.user.id }}">Dashboard<span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link"
-                 href="/trades/open">Open Trades</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link"
-                 href="/trades/history">Trading History</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link"
-                 href="/watchlists">Watchlists</a>
-            </li>
+          <li class="nav-item active">
+            <a
+              class="nav-link"
+              href="{{ url_for('users.show_user_dashboard', user_id=g.user.id) }}"
+              >Dashboard<span class="sr-only">(current)</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('trades.open_positions') }}"
+              >Open Trades</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="{{ url_for('trades.show_trading_history') }}"
+              >Trading History</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="{{ url_for('watchlists.watchlist_home') }}"
+              >Watchlists</a
+            >
+          </li>
           {% endif %}
         </ul>
       </div>
       <ul class="nav navbar-nav navbar-right">
         {% if g.user == None %}
-          <li class="nav-item">
-            <a class="nav-link"
-               href="/auth/signup">Signup</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link"
-               href="/auth/login">Login</a>
-          </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('auth.signup') }}">Signup</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+        </li>
         {% else %}
-          <li class="nav-item">
-            <a class="btn btn-success mr-4 px-3"
-               href="/trades/new">New Trade</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle"
-               href="#"
-               id="navbarDropdownMenuLink"
-               data-toggle="dropdown"
-               aria-haspopup="true"
-               aria-expanded="false">
-              {{ g.user.username }}
-            </a>
-            <div class="dropdown-menu dropdown-menu-right text-right"
-                 aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item"
-                 href="/users/{{ g.user.id }}/profile">User Profile</a>
-              <a class="dropdown-item"
-                 href="/users/{{ g.user.id }}/changepassword">Change Password</a>
-              <a class="dropdown-item"
-                 href="/users/{{ g.user.id }}/settings">Account Settings</a>
-              <a class="dropdown-item"
-                 href="/auth/logout">Logout</a>
-            </div>
-          </li>
+        <li class="nav-item">
+          <a
+            class="btn btn-success mr-4 px-3"
+            href="{{ url_for('trades.show_new_trade_form') }}"
+            >New Trade</a
+          >
+        </li>
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="navbarDropdownMenuLink"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            {{ g.user.username }}
+          </a>
+          <div
+            class="dropdown-menu dropdown-menu-right text-right"
+            aria-labelledby="navbarDropdownMenuLink"
+          >
+            <a
+              class="dropdown-item"
+              href="{{ url_for('users.show_user_profile', user_id=g.user.id) }}"
+              >User Profile</a
+            >
+            <a
+              class="dropdown-item"
+              href="{{ url_for('users.change_password', user_id=g.user.id) }}"
+              >Change Password</a
+            >
+            <a
+              class="dropdown-item"
+              href="{{ url_for('users.change_settings', user_id=g.user.id) }}"
+              >Account Settings</a
+            >
+            <a class="dropdown-item" href="{{ url_for('auth.logout') }}"
+              >Logout</a
+            >
+          </div>
+        </li>
         {% endif %}
       </ul>
     </nav>
     <!-- Flash Messages -->
     <div class="container mt-2">
-      {% include "alert.html" %}
-      {% for category, message in get_flashed_messages(with_categories=True) %}
-        <div id="alert"
-             role="alert"
-             class="alert alert-{{ category }} alert-dismissible fade show">
-          <span id="alert-msg">{{ message }}</span>
-          <button type="button"
-                  class="close"
-                  data-dismiss="alert"
-                  aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
+      {% include "alert.html" %} {% for category, message in
+      get_flashed_messages(with_categories=True) %}
+      <div
+        id="alert"
+        role="alert"
+        class="alert alert-{{ category }} alert-dismissible fade show"
+      >
+        <span id="alert-msg">{{ message }}</span>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
       {% endfor %}
     </div>
 
-    {% block content %}
-    {% endblock content %}
+    {% block content %} {% endblock content %}
 
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-            crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-            crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"
-            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-            crossorigin="anonymous"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
     <script src="https://momentjs.com/downloads/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
-    <script src="/static/js/trade.js"></script>
+    <script src="{{ url_for('static', filename='js/trade.js') }}"></script>
 
-    {% block scripts %}
-    {% endblock scripts %}
-
+    {% block scripts %} {% endblock scripts %}
   </body>
 </html>

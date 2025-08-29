@@ -1,33 +1,40 @@
-{% extends "base.html" %}
-
-{% block title %}
-  Welcome to StockSim
-{% endblock title %}
-
-{% block content %}
-  <div class="container mt-5">
-    <div class="row">
-      <div class="col-6 align-self-center">
-        <p class="display-2 text-center text-primary font-weight-bold">STOCKSIM</p>
-        <p class="h2 text-center text-primary">Trade US Stocks Live!</p>
-        <p class="h4 text-center mt-3 text-secondary">
-          Test your trading skills and strategies by trading US stocks live! Buy and sell your favorite companies with virtual funds and keep a track of your performance. Also, use watchlists to track the prices of your favorite stocks!
-        </p>
-        <div class="row mt-5 justify-content-center">
-          <a href="/auth/signup" class="btn btn-primary btn-lg">Signup Now!</a>
-        </div>
-        <div class="row mt-5 justify-content-center d-block text-center">
-          <p class="text-primary h6">Already registered?</p>
-          <a href="/auth/login" class="btn btn-primary btn-lg px-5">Login</a>
-        </div>
-        
+{% extends "base.html" %} {% block title %} Welcome to StockSim {% endblock
+title %} {% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-6 align-self-center">
+      <p class="display-2 text-center text-primary font-weight-bold">
+        STOCKSIM
+      </p>
+      <p class="h2 text-center text-primary">Trade US Stocks Live!</p>
+      <p class="h4 text-center mt-3 text-secondary">
+        Test your trading skills and strategies by trading US stocks live! Buy
+        and sell your favorite companies with virtual funds and keep a track of
+        your performance. Also, use watchlists to track the prices of your
+        favorite stocks!
+      </p>
+      <div class="row mt-5 justify-content-center">
+        <a href=" {{ url_for('auth.signup') }}" class="btn btn-primary btn-lg"
+          >Signup Now!</a
+        >
       </div>
-      <div class="col-6">
-        <img src="/static/img/stock-market-laptop.jpg"
-             alt="Stock Market Image"
-             width="400"
-             style="border-radius: 2%">
+      <div class="row mt-5 justify-content-center d-block text-center">
+        <p class="text-primary h6">Already registered?</p>
+        <a
+          href=" {{ url_for('auth.login') }}"
+          class="btn btn-primary btn-lg px-5"
+          >Login</a
+        >
       </div>
     </div>
+    <div class="col-6">
+      <img
+        src="{{ url_for('static', filename='img/stock-market-laptop.jpg') }}"
+        alt="Stock Market Image"
+        width="400"
+        style="border-radius: 2%"
+      />
+    </div>
   </div>
+</div>
 {% endblock content %}

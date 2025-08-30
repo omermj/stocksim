@@ -1,4 +1,4 @@
-import { putAlertInCookie, showAlertFromCookie } from "/static/js/alert.js";
+import { putAlertInCookie, showAlertFromCookie } from "../../static/js/alert.js";
 
 //---------------------------
 // Trade Close Button Click

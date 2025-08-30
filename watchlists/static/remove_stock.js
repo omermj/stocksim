@@ -3,7 +3,7 @@ import {
   showAlertFromCookie,
   hideAlert,
   showAlert,
-} from "../static/js/alert.js";
+} from "../../static/js/alert.js";
 
 $(".watchlist-table").on("click", ".remove-stock-btn", handleRemoveStock);
 

@@ -23,7 +23,7 @@
       </thead>
       <tbody class="open-trades-table">
         {% for trade in trades %}
-        <tr data-trade-id="{{" trade.id }}>
+        <tr data-trade-id="{{ trade.id }}">
           <td>{{ trade.id }}</td>
           <td>{{ trade.get_date("entry") }}</td>
           <td class="text-center">{{ trade.stock.symbol.upper() }}</td>

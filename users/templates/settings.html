@@ -8,7 +8,7 @@
   <div class="container col-3 mt-5">
     <h4 class="h4 mb-3">Account Balance: {{ "${:,.2f}".format(user.account_balance) }}</h4>
     <form method="POST"
-          action="/users/{{ g.user.id }}/settings">
+          action="{{ url_for('users.change_settings', user_id=g.user.id) }}">
       {{ form.hidden_tag() }}
       
       <div class="form-check form-check-inline mb-3">

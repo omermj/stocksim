@@ -28,7 +28,7 @@ services:
       ALPACA_SECRET_KEY: ${ALPACA_SECRET_KEY:-}
     # Bind to loopback only; host Caddy will reverse proxy to this
     ports:
-      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:9003:8000"
     restart: unless-stopped
 
 volumes:

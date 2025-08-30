@@ -10,7 +10,8 @@ async function handleTradeClose(e) {
   e.preventDefault();
 
   const tradeId = $(this).data().tradeId;
-  const response = await axios.put(`/trades/${tradeId}/close`);
+  const prefix = window.APP_PREFIX || "";
+  const response = await axios.put(`${prefix}/trades/${tradeId}/close`);
 
   // Hide modal
   $("#closeTradeModal").modal("hide");

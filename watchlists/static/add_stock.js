@@ -16,9 +16,13 @@ async function handleAddStock(e) {
   const watchlistId = $("#stock-input").data().watchlistId;
 
   // Make POST request to add stock to watchlist
-  const response = await axios.post(`/watchlists/${watchlistId}/addstock`, {
-    symbol: stockSymbol,
-  });
+  const prefix = window.APP_PREFIX || "";
+  const response = await axios.post(
+    `${prefix}/watchlists/${watchlistId}/addstock`,
+    {
+      symbol: stockSymbol,
+    }
+  );
 
   // If error, display the msg. Else add symbol to the table
   if (response.data.error) {

@@ -1,81 +1,93 @@
-{% extends "base.html" %}
-
-{% block title %}
-  Trade Details
-{% endblock title %}
-
+{% extends "base.html" %} {% block title %} Trade Details {% endblock title %}
 {% block content %}
-  <div class="container mt-3">
-    <!--Trade Card-->
-    <div class="card">
-      <h5 class="card-header">{{ trade.stock.name }} ({{ trade.stock.symbol }})</h5>
-      <div class="card-body">
-        <div class="row align-items-center">
-          <div class="col-6">
-            <table class="table">
-              <tr>
-                <td>Type:</td>
-                <td>{{ trade.trade_type.capitalize() }}</td>
-              </tr>
-              <tr>
-                <td>Status</td>
-                <td>{{ trade.status.capitalize() }}</td>
-              </tr>
-              <tr>
-                <td>Entry Timestamp</td>
-                <td>{{ trade.get_date("entry") }}</td>
-              </tr>
-              {% if trade.status == "closed" %}
-                <tr>
-                  <td>Exit Timestamp</td>
-                  <td>{{ trade.get_date("exit") }}</td>
-                </tr>
-              {% endif %}
-              <tr>
-                <td>Quantity:</td>
-                <td>{{ trade.qty }}</td>
-              </tr>
-              <tr>
-                <td>Entry Price:</td>
-                <td>{{ trade.entry_price }}</td>
-              </tr>
-              <tr>
-                <td>{{ 'Last Price' if trade.status == "open" else 'Exit Price' }}</td>
-                <td>{{ trade.latest_price }}</td>
-              </tr>
-            </table>
-          </div>
-          <div class="col-6">
-            {% if trade.get_pnl() >= 0 %}
-              <h1 class="display-1 text-center text-success font-weight-bold mb-0">+${{ trade.get_pnl() }}</h1>
-            {% else %}
-              <h1 class="display-1 text-center text-danger font-weight-bold mb-0">-${{ trade.get_pnl()|abs }}</h1>
+<div class="container mt-3">
+  <!--Trade Card-->
+  <div class="card">
+    <h5 class="card-header">
+      {{ trade.stock.name }} ({{ trade.stock.symbol }})
+    </h5>
+    <div class="card-body">
+      <div class="row align-items-center">
+        <div class="col-6">
+          <table class="table">
+            <tr>
+              <td>Type:</td>
+              <td>{{ trade.trade_type.capitalize() }}</td>
+            </tr>
+            <tr>
+              <td>Status</td>
+              <td>{{ trade.status.capitalize() }}</td>
+            </tr>
+            <tr>
+              <td>Entry Timestamp</td>
+              <td>{{ trade.get_date("entry") }}</td>
+            </tr>
+            {% if trade.status == "closed" %}
+            <tr>
+              <td>Exit Timestamp</td>
+              <td>{{ trade.get_date("exit") }}</td>
+            </tr>
             {% endif %}
-            <p class="h5 text-center mt-0 font-weight-bold">Profit/Loss</p>
-          </div>
+            <tr>
+              <td>Quantity:</td>
+              <td>{{ trade.qty }}</td>
+            </tr>
+            <tr>
+              <td>Entry Price:</td>
+              <td>{{ trade.entry_price }}</td>
+            </tr>
+            <tr>
+              <td>
+                {{ 'Last Price' if trade.status == "open" else 'Exit Price' }}
+              </td>
+              <td>{{ trade.latest_price }}</td>
+            </tr>
+          </table>
         </div>
-        <div class="row align-items-end text-center">
-          <div class="col">
-            {% if trade.status == "open" %}
-              <a href="#"
-                 class="btn btn-danger mr-2 px-4"
-                 data-toggle="modal"
-                 data-target="#closeTradeModal">Close Trade</a>
-            {% endif %}
-            <a href="/users/{{ g.user.id }}"
-               class="btn btn-secondary px-4 mr-2">View Dashboard</a>
-            <a href="/trades/open"
-               class="btn btn-primary">View Open Trades</a>
-          </div>
-          <!--Close Trade Confirmation Modal-->
-          {% include "close_trade_confirmation.html" %}
+        <div class="col-6">
+          {% if trade.get_pnl() >= 0 %}
+          <h1 class="display-1 text-center text-success font-weight-bold mb-0">
+            +${{ trade.get_pnl() }}
+          </h1>
+          {% else %}
+          <h1 class="display-1 text-center text-danger font-weight-bold mb-0">
+            -${{ trade.get_pnl()|abs }}
+          </h1>
+          {% endif %}
+          <p class="h5 text-center mt-0 font-weight-bold">Profit/Loss</p>
         </div>
+      </div>
+      <div class="row align-items-end text-center">
+        <div class="col">
+          {% if trade.status == "open" %}
+          <a
+            href="#"
+            class="btn btn-danger mr-2 px-4"
+            data-toggle="modal"
+            data-target="#closeTradeModal"
+            >Close Trade</a
+          >
+          {% endif %}
+          <a
+            href="{{ url_for('users.show_user_dashboard', user_id=g.user.id) }}"
+            class="btn btn-secondary px-4 mr-2"
+            >View Dashboard</a
+          >
+          <a
+            href="{{ url_for('trades.show_open_trades') }}"
+            class="btn btn-primary"
+            >View Open Trades</a
+          >
+        </div>
+        <!--Close Trade Confirmation Modal-->
+        {% include "close_trade_confirmation.html" %}
       </div>
     </div>
   </div>
-{% endblock content %}
-
-{% block scripts %}
-  <script src="{{url_for('.static', filename='close_trade.js')}}"
-          type="module"></script>
+</div>
+{% endblock content %} {% block scripts %}
+<script
+  src="{{url_for('.static', filename='close_trade.js')}}"
+  type="module"
+></script>
 {% endblock scripts %}

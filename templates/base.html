@@ -164,6 +164,9 @@
     <script src="https://momentjs.com/downloads/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
     <script src="{{ url_for('static', filename='js/trade.js') }}"></script>
+    <script>
+      window.APP_PREFIX = "{{ request.script_root }}";
+    </script>
 
     {% block scripts %} {% endblock scripts %}
   </body>

@@ -15,7 +15,8 @@ async function handleNewTradeSubmission(e) {
   $("#enter-trade-output").addClass("d-none");
 
   // Make POST request to enter new trade
-  const response = await axios.post("/trades/new", {
+  const prefix = window.APP_PREFIX || "";
+  const response = await axios.post(`${prefix}/trades/new`, {
     symbol: $("#symbol").val(),
     type: $("input[name='type']:checked").val(),
     qty: parseInt($("#qty").val()),

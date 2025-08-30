@@ -3,7 +3,7 @@ import {
   showAlertFromCookie,
   hideAlert,
   showAlert,
-} from "/static/js/alert.js";
+} from "../static/js/alert.js";
 
 $(".watchlist-table").on("click", ".trade-btn", tradeRequest);
 
@@ -16,6 +16,6 @@ async function tradeRequest(e) {
 
   // Get watchlist and stock id
   const stockId = $(this).parents("tr").data().stockId;
-
-  window.location.href = `/trades/new?stockid=${stockId}`
+  const prefix = window.APP_PREFIX || "";
+  window.location.href = `${prefix}/trades/new?stockid=${stockId}`;
 }

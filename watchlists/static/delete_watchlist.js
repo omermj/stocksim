@@ -12,8 +12,9 @@ async function handleWatchlistDelete(e) {
   // Get watchlist id
   const watchlistId = $(this).data().watchlistId;
 
-  // Make DELETE request to servier
-  const response = await axios.delete(`/watchlists/${watchlistId}`);
+  // Make DELETE request to server
+  const prefix = window.APP_PREFIX || "";
+  const response = await axios.delete(`${prefix}/watchlists/${watchlistId}`);
 
   // Hide modal
   $("#deleteWatchlist").modal("hide");
@@ -29,7 +30,7 @@ async function handleWatchlistDelete(e) {
   }
 
   // Reload the page
-  window.location.href = "/watchlists";
+  window.location.href = `${prefix}/watchlists`;
 }
 
 // Retrieve the alert message from cookie and display it

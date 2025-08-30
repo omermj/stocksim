@@ -3,7 +3,7 @@ import {
   showAlertFromCookie,
   hideAlert,
   showAlert,
-} from "/static/js/alert.js";
+} from "../static/js/alert.js";
 
 $(".watchlist-table").on("click", ".remove-stock-btn", handleRemoveStock);
 
@@ -19,8 +19,9 @@ async function handleRemoveStock(e) {
   const stockId = $(this).parents("tr").data().stockId;
 
   // Make a DELETE request
+  const prefix = window.APP_PREFIX || "";
   const response = await axios.delete(
-    `/watchlists/${watchlistId}/removestock/${stockId}`
+    `${prefix}/watchlists/${watchlistId}/removestock/${stockId}`
   );
 
   // If error, display results

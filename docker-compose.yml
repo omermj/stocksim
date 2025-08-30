@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: stocksim-db
+    environment:
+      POSTGRES_DB: stocksim
+      POSTGRES_USER: stocksim
+      POSTGRES_PASSWORD: stocksim
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: .
+    container_name: stocksim-web
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Use a local secret in dev; override in production
+      SECRET_KEY: ${SECRET_KEY:-secretkey_local}
+      # SQLAlchemy URL pointing to the 'db' service
+      DATABASE_URL: postgresql://stocksim:stocksim@db:5432/stocksim
+      # Optional: Alpaca API credentials for live prices (leave empty to use defaults in keys.py)
+      ALPACA_API_KEY: ${ALPACA_API_KEY:-}
+      ALPACA_SECRET_KEY: ${ALPACA_SECRET_KEY:-}
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    # No bind mounts by default so the image fully contains the app
+    # Uncomment below for live-reload style development (optional)
+    # volumes:
+    #   - .:/app
+
+volumes:
+  pgdata:
+    driver: local

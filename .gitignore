@@ -2,3 +2,10 @@
 **/__pycache__
 /venv
 **/.vscode/
+
+# Secrets and local env files
+.env
+.env.*
+.env.local
+.env.*.local
+.envrc

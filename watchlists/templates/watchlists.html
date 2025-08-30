@@ -16,7 +16,7 @@
               <div class="card-body">
                 <h4 class="card-title">{{ watchlist.name }}</h4>
                 <p class="card-text">{{ watchlist.description }}</p>
-                <a href="/watchlists/{{ watchlist.id }}"
+                <a href="{{ url_for('watchlists.show_watchlist', watchlist_id=watchlist.id) }}"
                    class="card-link">View</a>
               </div>
             </div>

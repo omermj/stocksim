@@ -1,0 +1,25 @@
+{
+  # Optional: email for ACME account
+  email {env.EMAIL}
+}
+
+{env.DOMAIN} {
+  encode gzip zstd
+  @static path_regexp static ^/(static|assets)/
+  handle @static {
+    root * /app
+    file_server
+  }
+
+  reverse_proxy web:8000 {
+    health_uri /
+    transport http {
+      read_buffer 8192
+    }
+  }
+
+  log {
+    output stdout
+    format console
+  }
+}

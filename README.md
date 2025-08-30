@@ -1,6 +1,82 @@
 # StockSim
 StockSim is a web based stock trading simulator, which enables users to create virtual stock trading accounts and trade the US Equity markets with virtual money. Users can test their trading skills and strategies on live markets and keep a record of their trading performance.
 
+## Docker (web + Postgres)
+
+This project ships with a Dockerfile and docker-compose.yml to run the app and a Postgres database.
+
+Quick start:
+
+1. Build the image and start services:
+
+  - Build the image: `docker compose build`
+  - Start the stack: `docker compose up -d`
+
+2. App will be available at http://localhost:8000/stocksim (WSGI mounts the app under `/stocksim`).
+
+3. Database connection used in Compose: `postgresql://stocksim:stocksim@db:5432/stocksim`.
+
+Notes:
+
+- The image contains the full code base. In development, you can uncomment the bind mount in `docker-compose.yml` to live-edit code.
+- To seed local data: `docker compose exec web python seed.py`.
+- Logs: `docker compose logs -f web` and `docker compose logs -f db`.
+- Stop and clean up: `docker compose down` (add `-v` to remove DB volume).
+
+## Host on Ubuntu with HTTPS (Caddy)
+
+Prereqs:
+- Ubuntu box reachable via your DDNS domain (e.g., myname.ddns.net) and ports 80/443 open/forwarded to the server.
+- Docker and Docker Compose installed.
+
+Steps:
+1. Copy repo to server:
+  - git clone https://github.com/omermj/stocksim.git && cd stocksim
+2. Create a `.env` file (on the server, not committed):
+  - DOMAIN=myname.ddns.net
+  - EMAIL=you@example.com        # optional, for Let’s Encrypt account
+  - SECRET_KEY=your_flask_secret
+  - ALPACA_API_KEY=...
+  - ALPACA_SECRET_KEY=...
+3a. If you want Dockerized Caddy: 
+   - docker compose -f docker-compose.prod.yml build
+   - docker compose -f docker-compose.prod.yml up -d
+   - Visit: `https://myname.ddns.net/`
+
+3b. If Caddy already runs on the host (systemd):
+   - Start only web+db and bind web to loopback:
+     - docker compose -f docker-compose.host-caddy.yml build
+     - docker compose -f docker-compose.host-caddy.yml up -d
+   - To serve the app at a subpath (e.g., https://myname.ddns.net/stocksim), add this to your host Caddyfile (e.g., /etc/caddy/Caddyfile):
+     
+     myname.ddns.net {
+       encode gzip zstd
+       # Proxy only the /stocksim path; strip it before forwarding
+       handle_path /stocksim* {
+         reverse_proxy 127.0.0.1:8000 {
+           header_up X-Forwarded-Prefix "/stocksim"
+         }
+       }
+       log {
+         output file /var/log/caddy/stocksim.log
+         format json
+       }
+     }
+   - Reload Caddy:
+     - sudo systemctl reload caddy
+   - Visit: `https://myname.ddns.net/stocksim`
+
+   Notes:
+   - The app already enables ProxyFix with x_prefix, so setting X-Forwarded-Prefix makes url_for/static URLs include the /stocksim prefix correctly.
+
+Notes:
+- Postgres isn’t exposed publicly; only Caddy exposes 80/443.
+- Certificates are handled automatically by Caddy and stored in a Docker volume.
+- Update the app without downtime: rebuild and restart `web` only.
+  - docker compose -f docker-compose.prod.yml build web
+  - docker compose -f docker-compose.prod.yml up -d web
+
+
 Live link: https://stocksim.herokuapp.com/
 
 ## Technologies Used
